@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}",
-            "buildFlags": "-tags windows"
+            "buildFlags": "-tags windows -ldflags='-H=windowsgui'"
         }
     ]
 }

@@ -6,7 +6,7 @@
         {
             "label": "Build optimized package (Windows)",
             "type": "shell",
-            "command": "go build -tags windows -ldflags='-s -w -H=windowsgui'",
+            "command": "go build -tags windows -ldflags='-s -w -H=windowsgui -extldflags '-static''",
             "problemMatcher": [
                 "$go"
             ],

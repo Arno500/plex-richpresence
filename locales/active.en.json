@@ -1,0 +1,20 @@
+{
+  "AutoLaunch": "Start on login",
+  "AutoLaunchDescription": "Enable the automatic launch of the program when starting your computer",
+  "Disconnect": "Disconnect",
+  "DisconnectDescription": "Disconnect from Plex. Will immediately trigger the opening of the browser to reconnect",
+  "ElapsedMode": "Elapsed",
+  "ElapsedModeDescription": "Will show the elapsed time in Discord",
+  "NowPlaying": "Playing",
+  "Paused": "Paused",
+  "Quit": "Quit",
+  "QuitDescription": "Close the app and stop the rich presence from Plex",
+  "RemainingMode": "Remaining",
+  "RemainingModeDescription": "Will show the remaining in Discord",
+  "SeasonEpisodeProgress": "Season {{.Season}}, episode {{.Episode}}",
+  "SignInNotificationDescription": "You can now login in the browser window that just opened!",
+  "SignInNotificationTitle": "Plex Rich Presence login",
+  "TimeMenu": "Time display",
+  "TimeMenuDescription": "The way of displaying time in Discord",
+  "WatchingPhotos": "Watching photos"
+}

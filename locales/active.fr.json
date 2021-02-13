@@ -1,0 +1,74 @@
+{
+  "AutoLaunch": {
+    "hash": "sha1-411736d1bdfc807f37e2570b20b94217b73604c7",
+    "other": "Lancer au démarrage"
+  },
+  "AutoLaunchDescription": {
+    "hash": "sha1-125b706b3a9aa9e905feae7cf17d2410510dafc1",
+    "other": "Active le lancement automatique de l'application au démarrage de l'ordinateur"
+  },
+  "Disconnect": {
+    "hash": "sha1-ed28e0686e1251ba046f582a3e9ec02470a5e78d",
+    "other": "Se déconnecter"
+  },
+  "DisconnectDescription": {
+    "hash": "sha1-4407f4e3dd4af900d57428dd60fdf4c314374377",
+    "other": "Déconnexion à Plex. Va automatiquement lancer le navigateur pour se reconnecter."
+  },
+  "ElapsedMode": {
+    "hash": "sha1-5fc97790c6a8d0d31fd5500ddd5c847e8419da0a",
+    "other": "Écoulé"
+  },
+  "ElapsedModeDescription": {
+    "hash": "sha1-ad474ae2c7001283b9c73a7a7e24bc115085966b",
+    "other": "Affiche le temps écoulé sur Discord"
+  },
+  "NowPlaying": {
+    "hash": "sha1-298c39056151b34c044cd50fa98cb1484f6859c3",
+    "other": "En cours de lecture"
+  },
+  "Paused": {
+    "hash": "sha1-c7dfb6f1d9c58a41a7c5eec76e7ed6dbd3750804",
+    "other": "En pause"
+  },
+  "Quit": {
+    "hash": "sha1-1a2285d8881f226e13430515a9dd2b9fb6294200",
+    "other": "Quitter"
+  },
+  "QuitDescription": {
+    "hash": "sha1-e9146ae6a03f6fa96016efa792e084d36172558b",
+    "other": "Ferme l'application et arrête d'envoyer les données à Discord"
+  },
+  "RemainingMode": {
+    "hash": "sha1-cc632b5e2fd25e472765bc5ff12eb8477a7019f4",
+    "other": "Restant"
+  },
+  "RemainingModeDescription": {
+    "hash": "sha1-dcfe5ec8ca6f11fe77f161bab3ccf11d614ebb78",
+    "other": "Affiche le temps restant sur Discord"
+  },
+  "SeasonEpisodeProgress": {
+    "hash": "sha1-f2bdd946973ef864796eeb42cd9ed6e6f28b878b",
+    "other": "Saison {{.Season}}, épisode {{.Episode}}"
+  },
+  "SignInNotificationDescription": {
+    "hash": "sha1-cac792b71d8c1e672e11d54216cd727a16342a16",
+    "other": "Vous pouvez maintenant vous connecter à Plex dans la fenêtre de votre navigateur"
+  },
+  "SignInNotificationTitle": {
+    "hash": "sha1-1f8b17fa2a26bd2fb63fea72bc4d029de9d633e3",
+    "other": "Connexion à Plex pour Plex Rich Presence"
+  },
+  "TimeMenu": {
+    "hash": "sha1-0a83740923c6a39ba6009f9fca2a6f26c52cdac3",
+    "other": "Affichage du temps"
+  },
+  "TimeMenuDescription": {
+    "hash": "sha1-89b88123af13329f02207e400e630775de8d69b7",
+    "other": "Change la manière d'afficher le temps dans Discord"
+  },
+  "WatchingPhotos": {
+    "hash": "sha1-2ac8fe3d2ecad76baaf054bfeca417b0785a164c",
+    "other": "Regarde des photos"
+  }
+}
