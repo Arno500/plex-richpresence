@@ -1,7 +1,7 @@
 variables:
   # Please edit to your GitLab project
   REPO_NAME: gitlab.com/Arno500/plex-richpresence
-  PACKAGE_VERSION: "1.0.0"
+  PACKAGE_VERSION: "${CI_COMMIT_TAG}"
   WINDOWS_AMD64_BINARY: "plex-rich-presence_win_64bits-${PACKAGE_VERSION}"
   LINUX_AMD64_BINARY: "plex-rich-presence_linux_64bits-${PACKAGE_VERSION}"
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/plex-rich-presence/${PACKAGE_VERSION}"
@@ -69,5 +69,3 @@ release:
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
         --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}\"}" \
         --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\"}"
-
-
