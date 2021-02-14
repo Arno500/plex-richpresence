@@ -27,7 +27,6 @@ stages:
 
 compile-linux:
   image: golang:latest
-  when: manual
   allow_failure: false
   stage: build
   script:
@@ -39,7 +38,6 @@ compile-linux:
 
 compile-windows:
   image: x1unix/go-mingw
-  when: manual
   allow_failure: false
   stage: build
   script:
