@@ -24,6 +24,7 @@ stages:
 compile-linux:
   image: golang:latest
   when: manual
+  allow_failure: false
   stage: build
   script:
     - apt-get update && apt-get -y install gcc libgtk-3-dev libappindicator3-dev
@@ -35,6 +36,7 @@ compile-linux:
 compile-windows:
   image: x1unix/go-mingw
   when: manual
+  allow_failure: false
   stage: build
   script:
     - GOOS=windows GOARCH=amd64 go build -race -tags windows -ldflags "-s -w -extldflags '-static' -H=windowsgui" -o ${WINDOWS_AMD64_BINARY}
@@ -45,9 +47,6 @@ compile-windows:
 upload:
   stage: upload
   image: curlimages/curl:latest
-  needs:
-    - compile-linux
-    - compile-windows
   before_script: []
   script:
     - |
@@ -58,8 +57,6 @@ upload:
 release:
   image: registry.gitlab.com/gitlab-org/release-cli
   stage: release
-  needs:
-    - upload
   release:
     tag_name: $CI_COMMIT_TAG
     description: "Created automatically"
