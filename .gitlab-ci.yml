@@ -2,8 +2,8 @@ variables:
   # Please edit to your GitLab project
   REPO_NAME: gitlab.com/Arno500/plex-richpresence
   PACKAGE_VERSION: "${CI_COMMIT_TAG}"
-  WINDOWS_AMD64_BINARY: "plex-rich-presence_win_64bits-${PACKAGE_VERSION}"
   LINUX_AMD64_BINARY: "plex-rich-presence_linux_64bits-${PACKAGE_VERSION}"
+  WINDOWS_AMD64_BINARY: "plex-rich-presence_win_64bits-${PACKAGE_VERSION}.exe"
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/plex-rich-presence/${PACKAGE_VERSION}"
 
 # The problem is that to be able to use go get, one needs to put
@@ -32,7 +32,7 @@ compile-linux:
     - GOOS=linux GOARCH=amd64 go build -race -tags unix -ldflags "-s -w" -o $CI_PROJECT_DIR/${LINUX_AMD64_BINARY}
   artifacts:
     paths:
-      - ${LINUX_AMD64_BINARY}
+      - plex-rich-presence_linux_64bits-*
 
 compile-windows:
   image: x1unix/go-mingw
@@ -43,7 +43,7 @@ compile-windows:
     - GOOS=windows GOARCH=amd64 go build -race -tags windows -ldflags "-s -w -extldflags '-static' -H=windowsgui" -o ${WINDOWS_AMD64_BINARY}
   artifacts:
     paths:
-      - ${WINDOWS_AMD64_BINARY}
+      - plex-rich-presence_win_64bits*
 
 upload:
   stage: upload
