@@ -50,6 +50,7 @@ upload:
   image: curlimages/curl:latest
   rules:
     - if: $CI_COMMIT_TAG
+  before_script: []
   script:
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${WINDOWS_AMD64_BINARY} ${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}
@@ -64,6 +65,7 @@ release:
     description: "Created automatically"
   rules:
     - if: $CI_COMMIT_TAG
+  before_script: []
   script:
     - |
       release-cli create --name "Release $CI_COMMIT_TAG" --tag-name $CI_COMMIT_TAG \
