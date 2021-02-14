@@ -1,10 +1,9 @@
 variables:
   # Please edit to your GitLab project
   REPO_NAME: gitlab.com/Arno500/plex-richpresence
-  PACKAGE_VERSION: "${CI_COMMIT_TAG}"
-  LINUX_AMD64_BINARY: "plex-rich-presence_linux_64bits-${PACKAGE_VERSION}"
-  WINDOWS_AMD64_BINARY: "plex-rich-presence_win_64bits-${PACKAGE_VERSION}.exe"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/plex-rich-presence/${PACKAGE_VERSION}"
+  LINUX_AMD64_BINARY: "plex-rich-presence_linux_64bits-${CI_COMMIT_TAG}"
+  WINDOWS_AMD64_BINARY: "plex-rich-presence_win_64bits-${CI_COMMIT_TAG}.exe"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/plex-rich-presence/${CI_COMMIT_TAG}"
 
 # The problem is that to be able to use go get, one needs to put
 # the repository in the $GOPATH. So for example if your gitlab domain
