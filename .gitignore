@@ -1,3 +1,4 @@
 *.exe
 config.json
 __debug*
+plex-rich-presence_*
