@@ -4,6 +4,8 @@ github.com/Arno500/go-plex-client v1.0.0 h1:/3aDU2t1aOniVIRGlPEczikQogtF1Qvw+Umy
 github.com/Arno500/go-plex-client v1.0.0/go.mod h1:JtWSp1QwU9mtOi42Pt5eR5IZImLcuqxo8Neymt2SMjo=
 github.com/Arno500/go-plex-client v1.0.1 h1:qjV816D1xx4mf2xlYQyjHVl3K9RHv2uWceaxHstnMik=
 github.com/Arno500/go-plex-client v1.0.1/go.mod h1:JtWSp1QwU9mtOi42Pt5eR5IZImLcuqxo8Neymt2SMjo=
+github.com/Arno500/go-plex-client v1.0.2 h1:5J+lCgtKlOkLiJqWxUdTvjAoRlyu/DdCWDQFb8KRO4A=
+github.com/Arno500/go-plex-client v1.0.2/go.mod h1:JtWSp1QwU9mtOi42Pt5eR5IZImLcuqxo8Neymt2SMjo=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=

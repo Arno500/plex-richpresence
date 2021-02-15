@@ -123,7 +123,11 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 			// Movie title
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, strconv.Itoa(session.Media.Year))
 		} else if session.Media.Type == "track" {
-			activityInfos.State = session.Media.OriginalTitle
+			if session.Media.OriginalTitle != "" {
+				activityInfos.State = session.Media.OriginalTitle
+			} else {
+				activityInfos.State = session.Media.GrandparentTitle
+			}
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, session.Media.ParentTitle)
 		} else if session.Media.Type == "photo" {
 			text := Localizer.MustLocalize(&i18n.LocalizeConfig{
