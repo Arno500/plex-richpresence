@@ -3,7 +3,7 @@ module gitlab.com/Arno500/plex-richpresence
 go 1.15
 
 require (
-	github.com/Arno500/go-plex-client v1.0.0
+	github.com/Arno500/go-plex-client v1.0.1
 	github.com/ananagame/rich-go v0.0.0-20210101112514-52d3ad6a938f // indirect
 	github.com/cloudfoundry/jibber_jabber v0.0.0-20151120183258-bcc4c8345a21
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
@@ -26,4 +26,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-// replace github.com/Arno500/go-plex-client => C:\Users\arnod\go\src\github.com\Arno500\go-plex-client
+replace github.com/Arno500/go-plex-client => C:\Users\arnod\go\src\github.com\Arno500\go-plex-client

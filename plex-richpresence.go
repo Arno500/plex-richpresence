@@ -36,11 +36,12 @@ var appAutoStart = &autostart.App{
 }
 
 func main() {
-	f, err := settings.ConfigFolders[0].Create("debug_log.txt")
+	f, err := os.OpenFile(filepath.Join(settings.ConfigFolders[0].Path, "debug_log.txt"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Panicf("Could not save logs, logging to console")
 	}
-	log.SetOutput(io.MultiWriter(os.Stdout, f))
+	defer f.Close()
+	log.SetOutput(io.MultiWriter(f, os.Stdout))
 	systray.Run(onReady, onExit)
 }
 
@@ -148,11 +149,11 @@ func mainFunc(ctx context.Context) {
 	var filteredServers []plex.PMSDevices
 	var accountData plex.UserPlexTV
 	var runningSockets []*chan interface{}
-	var wg sync.WaitGroup
 
 	timeoutchan := make(chan bool)
 
 	for {
+		var wg sync.WaitGroup
 		log.Printf("Refreshing servers")
 		Plex = GetPlexTv()
 		accountData, _ = Plex.MyAccount()
@@ -171,8 +172,12 @@ func mainFunc(ctx context.Context) {
 
 		if len(runningSockets) > 0 {
 			for _, socket := range runningSockets {
-				*socket <- true
+				select {
+				case *socket <- true:
+				default:
+				}
 			}
+			runningSockets = nil
 		}
 
 		for _, server := range filteredServers {
@@ -180,7 +185,7 @@ func mainFunc(ctx context.Context) {
 		}
 		log.Printf("Sucessfully connected to found WebSocket links")
 		go func() {
-			<-time.After(3 * time.Minute)
+			<-time.After(30 * time.Second)
 			timeoutchan <- true
 		}()
 
