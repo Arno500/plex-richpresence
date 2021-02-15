@@ -35,6 +35,7 @@ type PlexMediaKey struct {
 	Index            int64
 	ParentIndex      int64
 	GrandparentTitle string
+	OriginalTitle    string
 	ParentTitle      string
 	Title            string
 	Year             int

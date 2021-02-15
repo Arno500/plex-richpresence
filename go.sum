@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 github.com/AndreasBriese/bbloom v0.0.0-20190825152654-46b345b51c96/go.mod h1:bOvUY6CB00SOBii9/FifXqc0awNKxLFCL/+pkDPuyl8=
 github.com/Arno500/go-plex-client v1.0.0 h1:/3aDU2t1aOniVIRGlPEczikQogtF1Qvw+UmylW4s6l4=
 github.com/Arno500/go-plex-client v1.0.0/go.mod h1:JtWSp1QwU9mtOi42Pt5eR5IZImLcuqxo8Neymt2SMjo=
+github.com/Arno500/go-plex-client v1.0.1 h1:qjV816D1xx4mf2xlYQyjHVl3K9RHv2uWceaxHstnMik=
+github.com/Arno500/go-plex-client v1.0.1/go.mod h1:JtWSp1QwU9mtOi42Pt5eR5IZImLcuqxo8Neymt2SMjo=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
