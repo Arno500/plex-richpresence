@@ -26,4 +26,4 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/Arno500/go-plex-client => C:\Users\arnod\go\src\github.com\Arno500\go-plex-client
+// replace github.com/Arno500/go-plex-client => C:\Users\arnod\go\src\github.com\Arno500\go-plex-client
