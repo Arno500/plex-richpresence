@@ -13,6 +13,7 @@ import (
 	"github.com/emersion/go-autostart"
 	"github.com/getlantern/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
+	"gopkg.in/natefinch/lumberjack.v2"
 
 	"gitlab.com/Arno500/plex-richpresence/icon"
 	"gitlab.com/Arno500/plex-richpresence/settings"
@@ -36,12 +37,13 @@ var appAutoStart = &autostart.App{
 }
 
 func main() {
-	f, err := os.OpenFile(filepath.Join(settings.ConfigFolders[0].Path, "debug_log.txt"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Panicf("Could not save logs, logging to console")
-	}
-	defer f.Close()
-	log.SetOutput(io.MultiWriter(f, os.Stdout))
+	log.SetOutput(io.MultiWriter(&lumberjack.Logger{
+		Filename:   filepath.Join(settings.ConfigFolders[0].Path, "debug_log.txt"),
+		MaxSize:    5,
+		MaxBackups: 3,
+		MaxAge:     5,
+		Compress:   true,
+	}, os.Stdout))
 	systray.Run(onReady, onExit)
 }
 
@@ -110,6 +112,13 @@ func onReady() {
 		}}))
 	ctx, cancelMain := context.WithCancel(context.Background())
 	go mainFunc(ctx)
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("System error, retrying in 10 seconds", r)
+			time.Sleep(5 * time.Second)
+			mainFunc(ctx)
+		}
+	}()
 	for {
 		select {
 		case <-timeElapsed.ClickedCh:
@@ -143,6 +152,18 @@ func toggleTimeMode(checkbox1 *systray.MenuItem, checkbox2 *systray.MenuItem, va
 	settings.Save(StoredSettings)
 }
 
+func disconnectSockets(sockets *[]*chan interface{}) {
+	if len(*sockets) > 0 {
+		for _, socket := range *sockets {
+			select {
+			case *socket <- true:
+			default:
+			}
+		}
+	}
+	*sockets = nil
+}
+
 func mainFunc(ctx context.Context) {
 
 	var Plex *plex.Plex
@@ -157,10 +178,7 @@ func mainFunc(ctx context.Context) {
 		log.Printf("Refreshing servers")
 		Plex = GetPlexTv()
 		accountData, _ = Plex.MyAccount()
-		servers, err := Plex.GetServers()
-		if err != nil {
-			return
-		}
+		servers, _ := Plex.GetServers()
 
 		filteredServers = nil
 		for _, server := range servers {
@@ -170,27 +188,20 @@ func mainFunc(ctx context.Context) {
 
 		wg.Wait()
 
-		if len(runningSockets) > 0 {
-			for _, socket := range runningSockets {
-				select {
-				case *socket <- true:
-				default:
-				}
-			}
-			runningSockets = nil
-		}
+		disconnectSockets(&runningSockets)
 
 		for _, server := range filteredServers {
 			StartWebsocketConnections(server, &accountData, &runningSockets)
 		}
 		log.Printf("Sucessfully connected to found WebSocket links")
 		go func() {
-			<-time.After(30 * time.Second)
+			<-time.After(60 * time.Second)
 			timeoutchan <- true
 		}()
 
 		select {
 		case <-ctx.Done():
+			disconnectSockets(&runningSockets)
 			return
 		case <-timeoutchan:
 		}

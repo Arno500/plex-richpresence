@@ -36,7 +36,9 @@ func setupHeaders(Plex *plex.Plex) {
 func GetPlexTv() *plex.Plex {
 	err := CheckToken()
 	if err != nil {
-		log.Fatalln(err)
+		log.Printf("Couldn't get or check the token, retrying in 10 seconds (%s)", err)
+		time.Sleep(10 * time.Second)
+		return GetPlexTv()
 	}
 	var Plex = plex.Plex{
 		ClientIdentifier: StoredSettings.ClientIdentifier,
@@ -165,7 +167,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 		var stableSession PlexStableSession
 		notif := n.PlaySessionStateNotification[0]
 		if owned {
-			cacheEntry, entryExists := sessionCache[notif.RatingKey]
+			cacheEntry, entryExists := sessionCache[notif.SessionKey]
 			if entryExists {
 				cacheEntry.Session.State = notif.State
 				cacheEntry.Session.ViewOffset = notif.ViewOffset
@@ -178,7 +180,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 				for _, session := range sessions.MediaContainer.Metadata {
 					if notif.SessionKey == session.SessionKey && session.User.Title == accountData.Title {
 						stableSession = createSessionFromSessionObject(notif, session)
-						sessionCache[notif.RatingKey] = stableSession
+						sessionCache[notif.SessionKey] = stableSession
 						break
 					}
 				}

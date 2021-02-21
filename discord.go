@@ -21,7 +21,7 @@ func InitDiscordClient() {
 	}
 	err := discord.Login("803556010307616788")
 	if err != nil {
-		panic(err)
+		log.Panicln(err)
 	}
 	currentPlayState.DiscordConnected = true
 }

@@ -1,36 +1,43 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
-	"io/ioutil"
+	"io/fs"
+	"log"
 	"os"
 
 	"golang.org/x/text/language"
 
-	"github.com/cloudfoundry/jibber_jabber"
-	"github.com/markbates/pkger"
+	"github.com/cubiest/jibberjabber"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 // Localizer is the instance we use for localizing
 var Localizer *i18n.Localizer
 
+//go:embed locales/*
+var localeFiles embed.FS
+
 // InitLocale prepares the Localizer object
 func InitLocale() {
 	bundle := i18n.NewBundle(language.English)
-	userLanguage, _ := jibber_jabber.DetectLanguage()
+	userLanguage, err := jibberjabber.DetectLanguage()
+	if err != nil {
+		log.Printf("Cannot set language automatically (%s), setting to english", err)
+	} else {
+		log.Printf("Detected language: %s", userLanguage)
+	}
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
-	pkger.Walk("/locales", func(path string, info os.FileInfo, err error) error {
+	fs.WalkDir(localeFiles, "locales", func(path string, entry os.DirEntry, err error) error {
 		if err != nil {
-			return err
+			log.Printf("Could not open locale file: %s", err)
 		}
-		if info.IsDir() {
+		if entry.IsDir() {
 			return nil
 		}
-		fr, _ := pkger.Open(path)
-		bytes, _ := ioutil.ReadAll(fr)
-		bundle.ParseMessageFileBytes(bytes, info.Name())
-
+		fileContent, _ := localeFiles.ReadFile(path)
+		bundle.ParseMessageFileBytes(fileContent, entry.Name())
 		return nil
 	})
 	Localizer = i18n.NewLocalizer(bundle, userLanguage)

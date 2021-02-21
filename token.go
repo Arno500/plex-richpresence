@@ -18,7 +18,9 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-var httpClient = &http.Client{}
+var httpClient = &http.Client{
+	Timeout: 10 * time.Second,
+}
 
 func openbrowser(url string) {
 	var err error
@@ -63,16 +65,10 @@ func getClientIdentifier() string {
 func CheckToken() error {
 	if StoredSettings.AccessToken == "" {
 		log.Printf("We never had an access token, generating it")
-		var err error
-		if StoredSettings.Pin.Code != "" {
-			err = retrieveToken(true)
-		} else {
-			err = retrieveToken(false)
-		}
+		err := retrieveToken(StoredSettings.Pin.Code != "")
 		if err != nil {
 			return err
 		}
-		return nil
 	}
 	req, err := http.NewRequest("GET", "https://plex.tv/api/v2/user", nil)
 	req.Header.Add("accept", "application/json")
@@ -98,9 +94,7 @@ func CheckToken() error {
 		if err != nil {
 			return err
 		}
-		return nil
 	}
-
 	return nil
 }
 

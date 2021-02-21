@@ -1,27 +1,29 @@
 package main
 
 import (
-	"io"
+	_ "embed"
 	"log"
 	"os"
 	"path/filepath"
 
 	"github.com/gen2brain/beeep"
-	"github.com/markbates/pkger"
 )
+
+//go:embed icon/discord.png
+var notifIcon []byte
 
 // SendNotification on desktop
 func SendNotification(title string, text string) {
-	f, _ := pkger.Open("/icon/discord.png")
-	defer f.Close()
-	tempIconPath := filepath.Join(os.TempDir(), "ps-notif-icon.png")
-	tempIcon, _ := os.Create(tempIconPath)
-	defer tempIcon.Close()
-	_, err := io.Copy(tempIcon, f)
-	if err != nil {
-		log.Panic(err)
+	tempIconPath := filepath.Join(os.TempDir(), "prp-notif-icon.png")
+	if _, err := os.Stat(tempIconPath); err != nil {
+		if os.IsNotExist(err) {
+			err = os.WriteFile(tempIconPath, notifIcon, 0644)
+			if err != nil {
+				log.Panic(err)
+			}
+		}
 	}
-	err = beeep.Notify(title, text, tempIconPath)
+	err := beeep.Notify(title, text, tempIconPath)
 	if err != nil {
 		log.Panic(err)
 	}
