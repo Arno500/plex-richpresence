@@ -30,7 +30,7 @@ type PlexStableSession struct {
 type PlexMediaKey struct {
 	RatingKey        string
 	Type             string
-	Duration         int
+	Duration         int64
 	Director         []plex.TaggedData
 	Index            int64
 	ParentIndex      int64

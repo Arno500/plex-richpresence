@@ -80,7 +80,7 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 					Start: &calculatedStartTime,
 				}
 			} else if StoredSettings.TimeMode == "remaining" {
-				duration, _ := time.ParseDuration(strconv.Itoa(session.Media.Duration) + "ms")
+				duration, _ := time.ParseDuration(strconv.FormatInt(session.Media.Duration, 10) + "ms")
 				remaining := duration - progress
 				calculatedEndTime := now.Add(remaining)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedEndTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedEndTime)) {
@@ -118,10 +118,20 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 			// Show
 			activityInfos.Details = session.Media.GrandparentTitle
 		} else if session.Media.Type == "movie" {
+			var formattedMovieName string
+			if session.Media.Year > 0 {
+				formattedMovieName = fmt.Sprintf("%s (%s)", session.Media.Title, strconv.Itoa(session.Media.Year))
+			} else {
+				formattedMovieName = session.Media.Title
+			}
 			// Movie Director
-			activityInfos.State = session.Media.Director[0].Tag
-			// Movie title
-			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, strconv.Itoa(session.Media.Year))
+			if len(session.Media.Director) > 0 {
+				activityInfos.State = session.Media.Director[0].Tag
+				activityInfos.Details = formattedMovieName
+			} else {
+				activityInfos.State = "(⌐■_■)"
+				activityInfos.Details = formattedMovieName
+			}
 		} else if session.Media.Type == "track" {
 			if session.Media.OriginalTitle != "" {
 				activityInfos.State = session.Media.OriginalTitle

@@ -1,27 +1,41 @@
 module gitlab.com/Arno500/plex-richpresence
 
-go 1.16
+go 1.17
 
 require (
-	github.com/Arno500/go-plex-client v1.0.2
+	github.com/Arno500/go-plex-client v1.0.5
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
-	github.com/gen2brain/beeep v0.0.0-20200526185328-e9c15c258e28
-	github.com/getlantern/golog v0.0.0-20201105130739-9586b8bde3a9 // indirect
+	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
+	github.com/getlantern/systray v1.1.0
+	github.com/google/uuid v1.3.0
+	github.com/hugolgst/rich-go v0.0.0-20210925091458-d59fb695d9c0
+	github.com/nicksnyder/go-i18n/v2 v2.1.2
+	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
+	golang.org/x/text v0.3.7
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+)
+
+require (
+	github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 // indirect
+	github.com/getlantern/errors v1.0.1 // indirect
+	github.com/getlantern/golog v0.0.0-20210606115803-bce9f9fe5a5f // indirect
+	github.com/getlantern/hex v0.0.0-20190417191902-c6586a6fe0b7 // indirect
 	github.com/getlantern/hidden v0.0.0-20201229170000-e66e7f878730 // indirect
 	github.com/getlantern/ops v0.0.0-20200403153110-8476b16edcd6 // indirect
-	github.com/getlantern/systray v1.1.0
-	github.com/google/uuid v1.2.0
-	github.com/gopherjs/gopherjs v0.0.0-20210202160940-bed99a852dfe // indirect
-	github.com/hugolgst/rich-go v0.0.0-20210220192218-7960b995f880
-	github.com/nicksnyder/go-i18n/v2 v2.1.2
+	github.com/go-stack/stack v1.8.1 // indirect
+	github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4 // indirect
+	github.com/godbus/dbus/v5 v5.0.6 // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20211216084454-9ae78a3fa6dd // indirect
+	github.com/gopherjs/gopherwasm v1.1.0 // indirect
+	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.4 // indirect
-	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
+	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/stretchr/testify v1.5.1 // indirect
-	golang.org/x/sys v0.0.0-20210220050731-9a76102bfb43 // indirect
-	golang.org/x/text v0.3.5
-	gopkg.in/natefinch/lumberjack.v2 v2.0.0
+	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

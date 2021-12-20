@@ -101,7 +101,7 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 		Media: PlexMediaKey{
 			RatingKey:        wsNotif.RatingKey,
 			Type:             mediaInfos.MediaContainer.Metadata[0].Type,
-			Duration:         mediaInfos.MediaContainer.Metadata[0].Duration,
+			Duration:         int64(mediaInfos.MediaContainer.Metadata[0].Duration),
 			Index:            mediaInfos.MediaContainer.Metadata[0].Index,
 			ParentIndex:      mediaInfos.MediaContainer.Metadata[0].ParentIndex,
 			Director:         mediaInfos.MediaContainer.Metadata[0].Director,
@@ -118,13 +118,11 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 	}
 }
 func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1) PlexStableSession {
-	year, _ := strconv.Atoi(session.Year)
-	duration, _ := strconv.Atoi(session.Duration)
 	return PlexStableSession{
 		Media: PlexMediaKey{
 			RatingKey:        session.RatingKey,
 			Type:             session.Type,
-			Duration:         duration,
+			Duration:         session.Duration,
 			Index:            session.Index,
 			ParentIndex:      session.ParentIndex,
 			Director:         session.Director,
@@ -132,7 +130,7 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			OriginalTitle:    session.OriginalTitle,
 			ParentTitle:      session.ParentTitle,
 			Title:            session.Title,
-			Year:             year,
+			Year:             session.Year,
 		},
 		Session: PlexSessionKey{
 			State:      wsNotif.State,
@@ -154,15 +152,6 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 
 	events := plex.NewNotificationEvents()
 	events.OnPlaying(func(n plex.NotificationContainer) {
-		// GUID:""
-		// Key:"/library/metadata/75477"
-		// PlayQueueItemID:228823
-		// RatingKey:"75477"
-		// SessionKey:"3"
-		// State:"playing"
-		// URL:""
-		// ViewOffset:0
-		// TranscodeSession:"e3qilez0mo93hsyc0c5ummqv"
 		owned, _ := strconv.ParseBool(server.Owned)
 		var stableSession PlexStableSession
 		notif := n.PlaySessionStateNotification[0]
