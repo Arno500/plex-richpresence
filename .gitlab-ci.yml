@@ -1,9 +1,3 @@
-workflow:
-  only:
-    - tags
-  except:
-    - branches
-
 variables:
   # Please edit to your GitLab project
   REPO_NAME: gitlab.com/Arno500/plex-richpresence
@@ -37,6 +31,8 @@ compile-linux:
   artifacts:
     paths:
       - plex-rich-presence_linux_64bits-*
+  only:
+    - tags
 
 compile-windows:
   image: x1unix/go-mingw:1.17
@@ -47,6 +43,8 @@ compile-windows:
   artifacts:
     paths:
       - plex-rich-presence_win_64bits*
+  only:
+    - tags
 
 upload:
   stage: upload
