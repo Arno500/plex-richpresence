@@ -9,6 +9,7 @@ import (
 	"os/exec"
 	"runtime"
 	"strconv"
+	"sync"
 	"time"
 
 	"gitlab.com/Arno500/plex-richpresence/settings"
@@ -33,7 +34,7 @@ func openbrowser(url string) {
 	case "darwin":
 		err = exec.Command("open", url).Start()
 	default:
-		err = fmt.Errorf("Can't open links automatically on this platform")
+		err = fmt.Errorf("can't open links automatically on this platform")
 	}
 	if err != nil {
 		log.Println(err)
@@ -61,8 +62,14 @@ func getClientIdentifier() string {
 	return StoredSettings.ClientIdentifier
 }
 
+var waitingForAuth = sync.Mutex{}
+
 // CheckToken prepares and check the token
 func CheckToken() error {
+	// Never allow concurrent execution of this one, wait for the other to resolve first
+	waitingForAuth.Lock()
+	defer waitingForAuth.Unlock()
+
 	if StoredSettings.AccessToken == "" {
 		log.Printf("We never had an access token, generating it")
 		err := retrieveToken(StoredSettings.Pin.Code != "")
@@ -70,7 +77,7 @@ func CheckToken() error {
 			return err
 		}
 	}
-	req, err := http.NewRequest("GET", "https://plex.tv/api/v2/user", nil)
+	req, _ := http.NewRequest("GET", "https://plex.tv/api/v2/user", nil)
 	req.Header.Add("accept", "application/json")
 	queryString := req.URL.Query()
 	queryString.Set("X-Plex-Product", AppName)
@@ -81,12 +88,14 @@ func CheckToken() error {
 	resp, err := httpClient.Do(req)
 
 	if err != nil {
+		log.Printf("The token may be bad:")
+		log.Println(err)
 		return err
 	}
 
 	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode == 401 {
 		log.Printf("The access token we have is outdated, getting another one")
 		StoredSettings.AccessToken = ""
 		settings.Save(StoredSettings)
@@ -95,6 +104,7 @@ func CheckToken() error {
 			return err
 		}
 	}
+
 	return nil
 }
 
@@ -107,7 +117,7 @@ func retrieveToken(forceBrowser bool) error {
 			return err
 		}
 	}
-	req, err := http.NewRequest("GET", "https://plex.tv/api/v2/pins/"+strconv.Itoa(StoredSettings.Pin.ID), nil)
+	req, _ := http.NewRequest("GET", "https://plex.tv/api/v2/pins/"+strconv.Itoa(StoredSettings.Pin.ID), nil)
 	req.Header.Add("accept", "application/json")
 	queryString := req.URL.Query()
 	queryString.Set("code", StoredSettings.Pin.Code)
@@ -131,7 +141,7 @@ func retrieveToken(forceBrowser bool) error {
 		}
 	}
 	if tokenInformations.AuthToken == "" {
-		if forceBrowser == true {
+		if forceBrowser {
 			askForConnection()
 		} else {
 			log.Printf("Waiting for user authentication")
@@ -158,7 +168,7 @@ func askForConnection() {
 func retrievePin() error {
 	var pinInformations plex.PinResponse
 
-	req, err := http.NewRequest("POST", "https://plex.tv/api/v2/pins", nil)
+	req, _ := http.NewRequest("POST", "https://plex.tv/api/v2/pins", nil)
 	req.Header.Add("accept", "application/json")
 	queryString := req.URL.Query()
 	queryString.Set("strong", "true")

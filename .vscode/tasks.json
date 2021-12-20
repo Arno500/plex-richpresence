@@ -6,7 +6,7 @@
         {
             "label": "Build optimized package (Windows)",
             "type": "shell",
-            "command": "go build -tags windows -ldflags='-s -w -H=windowsgui -extldflags '-static'' -o plex-rich-presence_win-64bits.exe",
+            "command": "go build -tags windows -ldflags='-s -w -H=windowsgui -extldflags '-static'' -o plex-rich-presence_win_64bits-dev.exe",
             "problemMatcher": [
                 "$go"
             ],
@@ -21,6 +21,22 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
+            }
+        },
+        {
+            "label": "Build debug package (Windows)",
+            "type": "shell",
+            "command": "go build -tags windows -ldflags='-H=windowsgui -extldflags '-static'' -o plex-rich-presence_win_64bits-dev.exe",
+            "problemMatcher": [
+                "$go"
+            ],
+            "presentation": {
+                "echo": true,
+                "reveal": "silent",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": false
             }
         }
     ]

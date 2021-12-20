@@ -12,6 +12,12 @@
             "program": "${workspaceFolder}",
             "buildFlags": "-tags windows -ldflags='-H=windowsgui'"
         },
-        
+        {
+            "name": "Debug plex-rich-presence_win_64bits-dev.exe",
+            "type": "go",
+            "request": "launch",
+            "mode": "exec",
+            "program": "plex-rich-presence_win_64bits-dev.exe"
+        }
     ]
 }

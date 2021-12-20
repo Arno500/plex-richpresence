@@ -85,7 +85,6 @@ func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg 
 	if !found {
 		log.Printf("Couldn't find any working address for server %s", server.Name)
 	}
-	return
 }
 
 var sessionCache = make(map[string]PlexStableSession)
@@ -146,7 +145,8 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 	cancelChan := make(chan interface{})
 
 	onError := func(err error) {
-		time.Sleep(5 * time.Second)
+		log.Printf("Couldn't connect or lost connection to %s. Will reconnect in about 10 seconds", server.Name)
+		time.Sleep(10 * time.Second)
 		StartWebsocketConnections(server, accountData, runningSockets)
 	}
 

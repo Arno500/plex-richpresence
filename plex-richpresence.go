@@ -173,6 +173,8 @@ func mainFunc(ctx context.Context) {
 
 	timeoutchan := make(chan bool)
 
+	// TODO: Need to seed first session data if admin (Plex doesn't resend data)
+
 	for {
 		var wg sync.WaitGroup
 		log.Printf("Refreshing servers")
@@ -191,9 +193,11 @@ func mainFunc(ctx context.Context) {
 		disconnectSockets(&runningSockets)
 
 		for _, server := range filteredServers {
-			StartWebsocketConnections(server, &accountData, &runningSockets)
+			go StartWebsocketConnections(server, &accountData, &runningSockets)
+			log.Printf("Sucessfully connected to %s WebSocket", server.Connection[0].URI)
 		}
-		log.Printf("Sucessfully connected to found WebSocket links")
+
+		// Basically wait 60 seconds in another thread, then finish the loop iteration to scan servers again (thus refreshing everything)
 		go func() {
 			<-time.After(60 * time.Second)
 			timeoutchan <- true
