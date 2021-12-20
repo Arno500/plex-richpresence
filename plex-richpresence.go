@@ -11,7 +11,7 @@ import (
 
 	"github.com/Arno500/go-plex-client"
 	"github.com/emersion/go-autostart"
-	"github.com/getlantern/systray"
+	"github.com/nekr0z/systray"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"gopkg.in/natefinch/lumberjack.v2"
 

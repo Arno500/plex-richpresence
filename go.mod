@@ -7,9 +7,9 @@ require (
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
 	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
-	github.com/getlantern/systray v1.1.0
 	github.com/google/uuid v1.3.0
 	github.com/hugolgst/rich-go v0.0.0-20210925091458-d59fb695d9c0
+	github.com/nekr0z/systray v1.2.0
 	github.com/nicksnyder/go-i18n/v2 v2.1.2
 	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
 	golang.org/x/text v0.3.7
@@ -17,6 +17,7 @@ require (
 )
 
 require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 // indirect
 	github.com/getlantern/errors v1.0.1 // indirect
 	github.com/getlantern/golog v0.0.0-20210606115803-bce9f9fe5a5f // indirect
@@ -33,11 +34,12 @@ require (
 	github.com/onsi/ginkgo v1.14.2 // indirect
 	github.com/onsi/gomega v1.10.4 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
-	github.com/stretchr/testify v1.5.1 // indirect
+	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
 
 // replace github.com/Arno500/go-plex-client => C:\Users\arnod\go\src\github.com\Arno500\go-plex-client
