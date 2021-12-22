@@ -261,7 +261,9 @@ github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742/go.mod h1:bx2lN
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/neelance/astrewrite v0.0.0-20160511093645-99348263ae86/go.mod h1:kHJEU3ofeGjhHklVoIGuVj85JJwZ6kWPaJwCIxgnFmo=
 github.com/neelance/sourcemap v0.0.0-20200213170602-2833bce08e4c/go.mod h1:Qr6/a/Q4r9LP1IltGz7tA7iOK1WonHEYhu1HRBA7ZiM=
-github.com/nekr0z/systray v1.2.0 h1:p9UWLpxVNKrevqc05geOKWP841A7kAt4JhCS8ROfpCE=
+github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73 h1:MhYV6qZ1Xbj7HCEGH087aIV8NABCkv+6RRWGf/VmYKE=
+github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73/go.mod h1:CN8FlOrhCHdv2doGY8NQ4rxoEJeMTVIN6opbCc+LnvA=
+github.com/nekr0z/systray v1.2.0 h1:v5v24Xoiy116xOoEFCuegNMvq2wmMrwVLuClR2V+WyU=
 github.com/nekr0z/systray v1.2.0/go.mod h1:CN8FlOrhCHdv2doGY8NQ4rxoEJeMTVIN6opbCc+LnvA=
 github.com/nicksnyder/go-i18n/v2 v2.1.2 h1:QHYxcUJnGHBaq7XbvgunmZ2Pn0focXFqTD61CkH146c=
 github.com/nicksnyder/go-i18n/v2 v2.1.2/go.mod h1:d++QJC9ZVf7pa48qrsRWhMJ5pSHIPmS3OLqK1niyLxs=
