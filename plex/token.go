@@ -1,4 +1,4 @@
-package main
+package plex
 
 import (
 	"encoding/json"
@@ -12,11 +12,13 @@ import (
 	"sync"
 	"time"
 
+	"gitlab.com/Arno500/plex-richpresence/i18n"
+	"gitlab.com/Arno500/plex-richpresence/notify"
 	"gitlab.com/Arno500/plex-richpresence/settings"
 
 	"github.com/Arno500/go-plex-client"
 	"github.com/google/uuid"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
+	i18npkg "github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
 var httpClient = &http.Client{
@@ -40,12 +42,12 @@ func openbrowser(url string) {
 		log.Println(err)
 		log.Printf("Here is the link: %s", url)
 	}
-	SendNotification(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
+	notify.SendNotification(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+		DefaultMessage: &i18npkg.Message{
 			ID:    "SignInNotificationTitle",
 			Other: "Plex Rich Presence login",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
+		}}), i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+		DefaultMessage: &i18npkg.Message{
 			ID:    "SignInNotificationDescription",
 			Other: "You can now login in the browser window that just opened!",
 		}}))
@@ -53,13 +55,13 @@ func openbrowser(url string) {
 }
 
 func getClientIdentifier() string {
-	if StoredSettings.ClientIdentifier != "" {
-		return StoredSettings.ClientIdentifier
+	if settings.StoredSettings.ClientIdentifier != "" {
+		return settings.StoredSettings.ClientIdentifier
 	}
 	log.Printf("The client identifier has never been set. Generating one.")
-	StoredSettings.ClientIdentifier = uuid.NewString()
-	settings.Save(StoredSettings)
-	return StoredSettings.ClientIdentifier
+	settings.StoredSettings.ClientIdentifier = uuid.NewString()
+	settings.Save()
+	return settings.StoredSettings.ClientIdentifier
 }
 
 var waitingForAuth = sync.Mutex{}
@@ -70,9 +72,9 @@ func CheckToken() error {
 	waitingForAuth.Lock()
 	defer waitingForAuth.Unlock()
 
-	if StoredSettings.AccessToken == "" {
+	if settings.StoredSettings.AccessToken == "" {
 		log.Printf("We never had an access token, generating it")
-		err := retrieveToken(StoredSettings.Pin.Code != "")
+		err := retrieveToken(settings.StoredSettings.Pin.Code != "")
 		if err != nil {
 			return err
 		}
@@ -80,9 +82,9 @@ func CheckToken() error {
 	req, _ := http.NewRequest("GET", "https://plex.tv/api/v2/user", nil)
 	req.Header.Add("accept", "application/json")
 	queryString := req.URL.Query()
-	queryString.Set("X-Plex-Product", AppName)
+	queryString.Set("X-Plex-Product", appName)
 	queryString.Set("X-Plex-Client-Identifier", getClientIdentifier())
-	queryString.Set("X-Plex-Token", StoredSettings.AccessToken)
+	queryString.Set("X-Plex-Token", settings.StoredSettings.AccessToken)
 	req.URL.RawQuery = queryString.Encode()
 
 	resp, err := httpClient.Do(req)
@@ -97,8 +99,8 @@ func CheckToken() error {
 
 	if resp.StatusCode == 401 {
 		log.Printf("The access token we have is outdated, getting another one")
-		StoredSettings.AccessToken = ""
-		settings.Save(StoredSettings)
+		settings.StoredSettings.AccessToken = ""
+		settings.Save()
 		err := retrieveToken(true)
 		if err != nil {
 			return err
@@ -110,17 +112,17 @@ func CheckToken() error {
 
 func retrieveToken(forceBrowser bool) error {
 	var tokenInformations plex.PinResponse
-	if StoredSettings.Pin.ID == 0 {
+	if settings.StoredSettings.Pin.ID == 0 {
 		log.Printf("We never had a pin on Plex, creating one")
 		err := retrievePin()
 		if err != nil {
 			return err
 		}
 	}
-	req, _ := http.NewRequest("GET", "https://plex.tv/api/v2/pins/"+strconv.Itoa(StoredSettings.Pin.ID), nil)
+	req, _ := http.NewRequest("GET", "https://plex.tv/api/v2/pins/"+strconv.Itoa(settings.StoredSettings.Pin.ID), nil)
 	req.Header.Add("accept", "application/json")
 	queryString := req.URL.Query()
-	queryString.Set("code", StoredSettings.Pin.Code)
+	queryString.Set("code", settings.StoredSettings.Pin.Code)
 	queryString.Set("X-Plex-Client-Identifier", getClientIdentifier())
 	req.URL.RawQuery = queryString.Encode()
 
@@ -150,17 +152,17 @@ func retrieveToken(forceBrowser bool) error {
 		err := retrieveToken(false)
 		return err
 	}
-	StoredSettings.AccessToken = tokenInformations.AuthToken
-	settings.Save(StoredSettings)
+	settings.StoredSettings.AccessToken = tokenInformations.AuthToken
+	settings.Save()
 	return nil
 }
 
 func askForConnection() {
 	plexAuthURL, _ := url.Parse("https://app.plex.tv/auth")
 	plexAuthQuery := plexAuthURL.Query()
-	plexAuthQuery.Set("clientID", StoredSettings.ClientIdentifier)
-	plexAuthQuery.Set("code", StoredSettings.Pin.Code)
-	plexAuthQuery.Set("context[device][product]", AppName)
+	plexAuthQuery.Set("clientID", settings.StoredSettings.ClientIdentifier)
+	plexAuthQuery.Set("code", settings.StoredSettings.Pin.Code)
+	plexAuthQuery.Set("context[device][product]", appName)
 	plexAuthURL.Fragment = "?" + plexAuthQuery.Encode()
 	openbrowser(plexAuthURL.String())
 }
@@ -172,7 +174,7 @@ func retrievePin() error {
 	req.Header.Add("accept", "application/json")
 	queryString := req.URL.Query()
 	queryString.Set("strong", "true")
-	queryString.Set("X-Plex-Product", AppName)
+	queryString.Set("X-Plex-Product", appName)
 	queryString.Set("X-Plex-Client-Identifier", getClientIdentifier())
 	req.URL.RawQuery = queryString.Encode()
 
@@ -192,9 +194,9 @@ func retrievePin() error {
 		return fmt.Errorf("%+v", pinInformations.Errors)
 	}
 
-	StoredSettings.Pin.Code = pinInformations.Code
-	StoredSettings.Pin.ID = pinInformations.ID
-	settings.Save(StoredSettings)
+	settings.StoredSettings.Pin.Code = pinInformations.Code
+	settings.StoredSettings.Pin.ID = pinInformations.ID
+	settings.Save()
 
 	askForConnection()
 

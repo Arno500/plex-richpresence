@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/shibukawa/configdir"
+	"gitlab.com/Arno500/plex-richpresence/types"
 )
 
 // Copied from https://medium.com/@matryer/golang-advent-calendar-day-eleven-persisting-go-objects-to-disk-7caf1ee3d11d
@@ -16,9 +17,16 @@ var configFile = "config.json"
 var configDirs configdir.ConfigDir = configdir.New("Arno & Co", "Plex-Richpresence")
 var ConfigFolders []*configdir.Config = configDirs.QueryFolders(configdir.Global)
 
+// StoredSettings contains the global settings of the app
+var StoredSettings = types.PlexRPSettings{
+	TimeMode:                  "elapsed",
+	EnableNewDevicesByDefault: true,
+	Devices:                   []types.Device{},
+}
+
 // Save our config
 // Save - Saves a representation of v to the file at path.
-func Save(v interface{}) error {
+func Save() error {
 	lock.Lock()
 	defer lock.Unlock()
 	f, err := ConfigFolders[0].Create(configFile)
@@ -26,7 +34,7 @@ func Save(v interface{}) error {
 		return err
 	}
 	defer f.Close()
-	r, err := Marshal(v)
+	r, err := Marshal(&StoredSettings)
 	if err != nil {
 		return err
 	}
@@ -46,7 +54,7 @@ var Marshal = func(v interface{}) (io.Reader, error) {
 // Load loads the file at path into v.
 // Use os.IsNotExist() to see if the returned error is due
 // to the file being missing.
-func Load(v interface{}) error {
+func Load() error {
 	lock.Lock()
 	defer lock.Unlock()
 	folder := configDirs.QueryFolderContainsFile(configFile)
@@ -58,12 +66,12 @@ func Load(v interface{}) error {
 		return err
 	}
 	defer f.Close()
-	return Unmarshal(f, &v)
+	return Unmarshal(f, &StoredSettings)
 }
 
 // Unmarshal is a function that unmarshals the data from the
 // reader into the specified value.
 // By default, it uses the JSON unmarshaller.
-var Unmarshal = func(r io.Reader, v *interface{}) error {
+var Unmarshal = func(r io.Reader, v *types.PlexRPSettings) error {
 	return json.NewDecoder(r).Decode(v)
 }

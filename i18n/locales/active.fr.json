@@ -7,6 +7,18 @@
     "hash": "sha1-125b706b3a9aa9e905feae7cf17d2410510dafc1",
     "other": "Active le lancement automatique de l'application au démarrage de l'ordinateur"
   },
+  "DeviceDescription": {
+    "hash": "sha1-3fe55b92f5c9f03748816844d11fcbd85e15dbd2",
+    "other": "Activer {{.Identifier}} avec le logiciel {{.Product}}"
+  },
+  "DevicesMenu": {
+    "hash": "sha1-df485c871329671f46570634d63216761441bcd6",
+    "other": "Lecteurs"
+  },
+  "DevicesMenuDescription": {
+    "hash": "sha1-70e15fe57c49de6f87a73df719ce1293805e8b51",
+    "other": "Quels lecteurs doivent être suivis"
+  },
   "Disconnect": {
     "hash": "sha1-ed28e0686e1251ba046f582a3e9ec02470a5e78d",
     "other": "Se déconnecter"
@@ -22,6 +34,14 @@
   "ElapsedModeDescription": {
     "hash": "sha1-ad474ae2c7001283b9c73a7a7e24bc115085966b",
     "other": "Affiche le temps écoulé sur Discord"
+  },
+  "EnableDevicesByDefault": {
+    "hash": "sha1-7179de376deb89b945b9add8eaa115f62b6c12c9",
+    "other": "Suivre les lecteurs par défaut"
+  },
+  "EnableDevicesByDefaultDescription": {
+    "hash": "sha1-63fed56894d297aa3ee0573275d5092ed0a0aa3f",
+    "other": "Cocher la case pour suivre les lecteurs par défaut dès leur détection"
   },
   "NowPlaying": {
     "hash": "sha1-298c39056151b34c044cd50fa98cb1484f6859c3",

@@ -1,4 +1,4 @@
-package main
+package plex
 
 import (
 	"log"
@@ -12,10 +12,17 @@ import (
 	"time"
 
 	"github.com/Arno500/go-plex-client"
+	"github.com/jpillora/backoff"
+	"gitlab.com/Arno500/plex-richpresence/discord"
+	"gitlab.com/Arno500/plex-richpresence/settings"
+	"gitlab.com/Arno500/plex-richpresence/types"
 )
 
+// AppName contains the name of the application sent to Plex
+var appName = "Plex Rich Presence by Arno & Co"
+
 func setupHeaders(Plex *plex.Plex) {
-	Plex.Headers.Product = AppName
+	Plex.Headers.Product = appName
 	Plex.Headers.Platform = runtime.GOOS
 	Plex.Headers.PlatformVersion = "0.0.1"
 	Plex.Headers.Version = "0.0.1"
@@ -41,8 +48,8 @@ func GetPlexTv() *plex.Plex {
 		return GetPlexTv()
 	}
 	var Plex = plex.Plex{
-		ClientIdentifier: StoredSettings.ClientIdentifier,
-		Token:            StoredSettings.AccessToken,
+		ClientIdentifier: settings.StoredSettings.ClientIdentifier,
+		Token:            settings.StoredSettings.AccessToken,
 		HTTPClient: http.Client{
 			Timeout: 3 * time.Second,
 		},
@@ -57,7 +64,7 @@ func GetPlexTv() *plex.Plex {
 func GetPlex(instance string, token string) *plex.Plex {
 	Plex := GetPlexTv()
 	Plex.URL = instance
-	Plex.Headers.ClientIdentifier = StoredSettings.ClientIdentifier
+	Plex.Headers.ClientIdentifier = settings.StoredSettings.ClientIdentifier
 	Plex.Token = token
 	Plex.Headers.Token = token
 	return Plex
@@ -87,17 +94,17 @@ func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg 
 	}
 }
 
-var sessionCache = make(map[string]PlexStableSession)
+var sessionCache = make(map[string]types.PlexStableSession)
 var mediaCache = make(map[string]plex.MediaMetadata)
 
-func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *plex.Plex) PlexStableSession {
+func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *plex.Plex) types.PlexStableSession {
 	mediaInfos, entryExists := mediaCache[wsNotif.RatingKey]
 	if !entryExists {
 		mediaInfos, _ = Plex.GetMetadata(wsNotif.RatingKey)
 		mediaCache[wsNotif.RatingKey] = mediaInfos
 	}
-	return PlexStableSession{
-		Media: PlexMediaKey{
+	return types.PlexStableSession{
+		Media: types.PlexMediaKey{
 			RatingKey:        wsNotif.RatingKey,
 			Type:             mediaInfos.MediaContainer.Metadata[0].Type,
 			Duration:         int64(mediaInfos.MediaContainer.Metadata[0].Duration),
@@ -110,15 +117,21 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 			Title:            mediaInfos.MediaContainer.Metadata[0].Title,
 			Year:             mediaInfos.MediaContainer.Metadata[0].Year,
 		},
-		Session: PlexSessionKey{
+		Session: types.PlexSessionKey{
 			State:      wsNotif.State,
 			ViewOffset: wsNotif.ViewOffset,
 		},
+		// TODO: Not confident, here...
+		Player: types.PlexPlayerKey{
+			MachineIdentifier: mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier,
+			Title:             mediaInfos.MediaContainer.Metadata[0].Player.Title,
+			Product:           mediaInfos.MediaContainer.Metadata[0].Player.Product,
+		},
 	}
 }
-func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1) PlexStableSession {
-	return PlexStableSession{
-		Media: PlexMediaKey{
+func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1) types.PlexStableSession {
+	return types.PlexStableSession{
+		Media: types.PlexMediaKey{
 			RatingKey:        session.RatingKey,
 			Type:             session.Type,
 			Duration:         session.Duration,
@@ -131,29 +144,41 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			Title:            session.Title,
 			Year:             session.Year,
 		},
-		Session: PlexSessionKey{
+		Session: types.PlexSessionKey{
 			State:      wsNotif.State,
 			ViewOffset: wsNotif.ViewOffset,
+		},
+		Player: types.PlexPlayerKey{
+			MachineIdentifier: session.Player.MachineIdentifier,
+			Title:             session.Player.Title,
+			Product:           session.Player.Product,
 		},
 	}
 }
 
-//StartWebsocketConnections starts a WebSocket connection to a server, and managing events from them/
-func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPlexTV, runningSockets *[]*chan interface{}) {
+var connectBackoff = &backoff.Backoff{
+	Min: 100 * time.Millisecond,
+	Max: 10 * time.Second,
+}
+
+// StartWebsocketConnections starts a WebSocket connection to a server, and manages events from them
+func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
 	Plex := GetPlex(server.Connection[0].URI, server.AccessToken)
 
 	cancelChan := make(chan interface{})
 
 	onError := func(err error) {
-		log.Printf("Couldn't connect or lost connection to %s. Will reconnect in about 10 seconds", server.Name)
-		time.Sleep(10 * time.Second)
+		cancelChan <- true
+		log.Printf("Couldn't connect or lost connection to %s", server.Name)
+		time.Sleep(connectBackoff.Duration())
+		delete(*runningSockets, server.ClientIdentifier)
 		StartWebsocketConnections(server, accountData, runningSockets)
 	}
 
 	events := plex.NewNotificationEvents()
 	events.OnPlaying(func(n plex.NotificationContainer) {
 		owned, _ := strconv.ParseBool(server.Owned)
-		var stableSession PlexStableSession
+		var stableSession types.PlexStableSession
 		notif := n.PlaySessionStateNotification[0]
 		if owned {
 			cacheEntry, entryExists := sessionCache[notif.SessionKey]
@@ -177,8 +202,11 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 		} else {
 			stableSession = createSessionFromWSNotif(n.PlaySessionStateNotification[0], Plex)
 		}
+		if !MachineIsEnabled(stableSession.Player) {
+			return
+		}
 		if stableSession.Session.State != "" {
-			SetRichPresence(stableSession, Plex, owned)
+			discord.SetRichPresence(stableSession, owned)
 			if stableSession.Session.State == "stopped" {
 				delete(sessionCache, notif.RatingKey)
 			}
@@ -186,5 +214,6 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 	})
 
 	Plex.SubscribeToNotifications(events, cancelChan, onError)
-	*runningSockets = append(*runningSockets, &cancelChan)
+	(*runningSockets)[server.ClientIdentifier] = &cancelChan
+	connectBackoff.Reset()
 }

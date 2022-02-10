@@ -33,7 +33,13 @@ You'll need GCC (even on Windows, unfortunately)
 
 ## Locales
 
-I use https://github.com/nicksnyder/go-i18n. Please follow their instructions to add a language file first. Be careful to pass the option `-format json` to have json files generated for you.
+I use https://github.com/nicksnyder/go-i18n. Please follow their instructions to add a language file first.
+
+1. `goi18n extract --format json -outdir i18n/locales` to extract any string you added in the program
+2. `goi18n merge --format json -outdir i18n/locales i18n/locales/active.en.json i18n/locales/active.fr.json` to create the delta between english and french
+3. Translate everything in `i18n/locales/translate.fr.json`
+4. `goi18n merge --format json -outdir i18n/locales i18n/locales/active.en.json i18n/locales/active.fr.json i18n/locales/translate.fr.json` Re-run the command to include the new strings in the active file
+5. Remove the `translate.xx.json` file
 
 ## Packaging
 

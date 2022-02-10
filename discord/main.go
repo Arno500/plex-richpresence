@@ -1,4 +1,4 @@
-package main
+package discord
 
 import (
 	// "fmt"
@@ -7,12 +7,14 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/Arno500/go-plex-client"
 	discord "github.com/hugolgst/rich-go/client"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
+	i18npkg "github.com/nicksnyder/go-i18n/v2/i18n"
+	"gitlab.com/Arno500/plex-richpresence/i18n"
+	"gitlab.com/Arno500/plex-richpresence/settings"
+	"gitlab.com/Arno500/plex-richpresence/types"
 )
 
-var currentPlayState PlayState
+var currentPlayState types.PlayState
 
 //InitDiscordClient prepares Discord's RPC API to allow Rich Presence
 func InitDiscordClient() {
@@ -35,7 +37,7 @@ func LogoutDiscordClient() {
 }
 
 // SetRichPresence allows to send Rich Presence informations to Plex from a session info
-func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned bool) {
+func SetRichPresence(session types.PlexStableSession, owned bool) {
 	now := time.Now()
 	stateAltered := false
 	activityInfos := discord.Activity{
@@ -52,16 +54,16 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 	}
 	if session.Session.State == "paused" {
 		activityInfos.SmallImage = "pause"
-		activityInfos.SmallText = Localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: &i18n.Message{
+		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+			DefaultMessage: &i18npkg.Message{
 				ID:    "Paused",
 				Other: "Paused",
 			},
 		})
 	} else if (session.Session.State == "playing" || session.Session.State == "buffering") && session.Media.Type != "photo" {
 		activityInfos.SmallImage = "play"
-		activityInfos.SmallText = Localizer.MustLocalize(&i18n.LocalizeConfig{
-			DefaultMessage: &i18n.Message{
+		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+			DefaultMessage: &i18npkg.Message{
 				ID:    "NowPlaying",
 				Other: "Playing",
 			},
@@ -69,7 +71,7 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 		if session.Session.State == "playing" {
 			timeResetThreshold, _ := time.ParseDuration("4s")
 			progress, _ := time.ParseDuration(strconv.FormatInt(session.Session.ViewOffset, 10) + "ms")
-			if StoredSettings.TimeMode == "elapsed" {
+			if settings.StoredSettings.TimeMode == "elapsed" {
 				calculatedStartTime := now.Add(-progress)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedStartTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedStartTime)) {
 					log.Printf("A seeking or a media change was detected, adjusting")
@@ -79,7 +81,7 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 				activityInfos.Timestamps = &discord.Timestamps{
 					Start: &calculatedStartTime,
 				}
-			} else if StoredSettings.TimeMode == "remaining" {
+			} else if settings.StoredSettings.TimeMode == "remaining" {
 				duration, _ := time.ParseDuration(strconv.FormatInt(session.Media.Duration, 10) + "ms")
 				remaining := duration - progress
 				calculatedEndTime := now.Add(remaining)
@@ -105,8 +107,8 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 	if stateAltered {
 		if session.Media.Type == "episode" {
 			// Season - Ep
-			activityInfos.State = Localizer.MustLocalize(&i18n.LocalizeConfig{
-				DefaultMessage: &i18n.Message{
+			activityInfos.State = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+				DefaultMessage: &i18npkg.Message{
 					ID:    "SeasonEpisodeProgress",
 					Other: "Season {{.Season}}, episode {{.Episode}}",
 				},
@@ -140,8 +142,8 @@ func SetRichPresence(session PlexStableSession, plexInstance *plex.Plex, owned b
 			}
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, session.Media.ParentTitle)
 		} else if session.Media.Type == "photo" {
-			text := Localizer.MustLocalize(&i18n.LocalizeConfig{
-				DefaultMessage: &i18n.Message{
+			text := i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+				DefaultMessage: &i18npkg.Message{
 					ID:    "WatchingPhotos",
 					Other: "Watching photos",
 				},

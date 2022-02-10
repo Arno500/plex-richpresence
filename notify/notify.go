@@ -1,4 +1,4 @@
-package main
+package notify
 
 import (
 	_ "embed"
@@ -9,7 +9,7 @@ import (
 	"github.com/gen2brain/beeep"
 )
 
-//go:embed icon/discord.png
+//go:embed discord.png
 var notifIcon []byte
 
 // SendNotification on desktop

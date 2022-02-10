@@ -9,34 +9,24 @@ import (
 	"sync"
 	"time"
 
-	"github.com/Arno500/go-plex-client"
-	"github.com/emersion/go-autostart"
-	"github.com/nekr0z/systray"
-	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"gopkg.in/natefinch/lumberjack.v2"
 
-	"gitlab.com/Arno500/plex-richpresence/icon"
+	plexpkg "github.com/Arno500/go-plex-client"
+
+	"gitlab.com/Arno500/plex-richpresence/discord"
+	"gitlab.com/Arno500/plex-richpresence/gui"
+	"gitlab.com/Arno500/plex-richpresence/i18n"
+	"gitlab.com/Arno500/plex-richpresence/plex"
 	"gitlab.com/Arno500/plex-richpresence/settings"
+	"gitlab.com/Arno500/plex-richpresence/types"
 )
 
-// AppName contains the name of the application sent to Plex
-var AppName = "Plex Rich Presence by Arno & Co"
-
-// StoredSettings contains the global settings of the app
-var StoredSettings = PlexRPSettings{
-	TimeMode: "elapsed",
-}
-
-var appExec, _ = os.Executable()
-var appExecResolved, _ = filepath.EvalSymlinks(appExec)
-
-var appAutoStart = &autostart.App{
-	Name:        "Plex Rich Presence",
-	DisplayName: "Plex Rich Presence",
-	Exec:        []string{appExecResolved},
-}
-
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Fatalf("An error occured when contacting server, the program will now exit: %s", r)
+		}
+	}()
 	log.SetOutput(io.MultiWriter(&lumberjack.Logger{
 		Filename:   filepath.Join(settings.ConfigFolders[0].Path, "debug_log.txt"),
 		MaxSize:    5,
@@ -44,72 +34,13 @@ func main() {
 		MaxAge:     5,
 		Compress:   true,
 	}, os.Stdout))
-	systray.Run(onReady, onExit)
+	gui.StartTray(onReady, onExit)
 }
 
 func onReady() {
-	InitLocale()
-	settings.Load(&StoredSettings)
-
-	systray.SetIcon(icon.Data)
-	systray.SetTitle("Plex Rich Presence")
-	systray.SetTooltip("Plex Rich Presence")
-	timeMenu := systray.AddMenuItem(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "TimeMenu",
-			Other: "Time display",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "TimeMenuDescription",
-			Other: "The way of displaying time in Discord",
-		}}))
-	timeElapsed := timeMenu.AddSubMenuItemCheckbox(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "ElapsedMode",
-			Other: "Elapsed",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "ElapsedModeDescription",
-			Other: "Will show the elapsed time in Discord",
-		}}), StoredSettings.TimeMode == "elapsed")
-	timeRemaining := timeMenu.AddSubMenuItemCheckbox(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "RemainingMode",
-			Other: "Remaining",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "RemainingModeDescription",
-			Other: "Will show the remaining in Discord",
-		}}), StoredSettings.TimeMode == "remaining")
-	autoLaunch := systray.AddMenuItemCheckbox(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "AutoLaunch",
-			Other: "Start on login",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "AutoLaunchDescription",
-			Other: "Enable the automatic launch of the program when starting your computer",
-		}}), appAutoStart.IsEnabled())
-	systray.AddSeparator()
-	disconnectBtn := systray.AddMenuItem(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "Disconnect",
-			Other: "Disconnect",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "DisconnectDescription",
-			Other: "Disconnect from Plex. Will immediately trigger the opening of the browser to reconnect",
-		}}))
-	systray.AddSeparator()
-	quitBtn := systray.AddMenuItem(Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "Quit",
-			Other: "Quit",
-		}}), Localizer.MustLocalize(&i18n.LocalizeConfig{
-		DefaultMessage: &i18n.Message{
-			ID:    "QuitDescription",
-			Other: "Close the app and stop the rich presence from Plex",
-		}}))
+	i18n.InitLocale()
+	settings.Load()
+	gui.SetupTray()
 	ctx, cancelMain := context.WithCancel(context.Background())
 	go mainFunc(ctx)
 	defer func() {
@@ -121,55 +52,41 @@ func onReady() {
 	}()
 	for {
 		select {
-		case <-timeElapsed.ClickedCh:
-			toggleTimeMode(timeElapsed, timeRemaining, "elapsed")
-		case <-timeRemaining.ClickedCh:
-			toggleTimeMode(timeRemaining, timeElapsed, "remaining")
-		case <-autoLaunch.ClickedCh:
-			if autoLaunch.Checked() {
-				autoLaunch.Uncheck()
-				appAutoStart.Disable()
-			} else {
-				autoLaunch.Check()
-				appAutoStart.Enable()
-			}
-		case <-disconnectBtn.ClickedCh:
-			StoredSettings.AccessToken = ""
-			StoredSettings.Pin = PinSettings{}
-			settings.Save(StoredSettings)
+		case <-gui.TrayHandlers.TimeElapsed.ClickedCh:
+			gui.ToggleTimeMode(gui.TrayHandlers.TimeElapsed, gui.TrayHandlers.TimeRemaining, "elapsed")
+		case <-gui.TrayHandlers.TimeRemaining.ClickedCh:
+			gui.ToggleTimeMode(gui.TrayHandlers.TimeRemaining, gui.TrayHandlers.TimeElapsed, "remaining")
+		case <-gui.TrayHandlers.EnabledDeviceByDefault.ClickedCh:
+			gui.ToggleAutoEnableDevices(gui.TrayHandlers.EnabledDeviceByDefault)
+		case <-gui.TrayHandlers.AutoLaunch.ClickedCh:
+			gui.ToggleAutoStart(gui.TrayHandlers.AutoLaunch)
+		case <-gui.TrayHandlers.DisconnectBtn.ClickedCh:
+			settings.StoredSettings.AccessToken = ""
+			settings.StoredSettings.Pin = types.PinSettings{}
+			settings.Save()
 			cancelMain()
 			go mainFunc(ctx)
-		case <-quitBtn.ClickedCh:
-			systray.Quit()
+		case <-gui.TrayHandlers.QuitBtn.ClickedCh:
+			gui.Quit()
 		}
 	}
 }
 
-func toggleTimeMode(checkbox1 *systray.MenuItem, checkbox2 *systray.MenuItem, valToSet string) {
-	checkbox1.Check()
-	checkbox2.Uncheck()
-	StoredSettings.TimeMode = valToSet
-	settings.Save(StoredSettings)
-}
-
-func disconnectSockets(sockets *[]*chan interface{}) {
-	if len(*sockets) > 0 {
-		for _, socket := range *sockets {
-			select {
-			case *socket <- true:
-			default:
-			}
+func disconnectSockets(sockets *map[string]*chan interface{}) {
+	for _, socket := range *sockets {
+		select {
+		case *socket <- true:
+		default:
 		}
 	}
-	*sockets = nil
+	*sockets = make(map[string]*chan interface{})
 }
 
 func mainFunc(ctx context.Context) {
-
-	var Plex *plex.Plex
-	var filteredServers []plex.PMSDevices
-	var accountData plex.UserPlexTV
-	var runningSockets []*chan interface{}
+	var Plex *plexpkg.Plex
+	var filteredServers []plexpkg.PMSDevices
+	var accountData plexpkg.UserPlexTV
+	runningSockets := make(map[string]*chan interface{})
 
 	timeoutchan := make(chan bool)
 
@@ -178,22 +95,22 @@ func mainFunc(ctx context.Context) {
 	for {
 		var wg sync.WaitGroup
 		log.Printf("Refreshing servers")
-		Plex = GetPlexTv()
+		Plex = plex.GetPlexTv()
 		accountData, _ = Plex.MyAccount()
 		servers, _ := Plex.GetServers()
 
 		filteredServers = nil
 		for _, server := range servers {
-			wg.Add(1)
-			go GetGoodURI(server, &filteredServers, &wg)
+			if _, ok := runningSockets[server.ClientIdentifier]; !ok {
+				wg.Add(1)
+				go plex.GetGoodURI(server, &filteredServers, &wg)
+			}
 		}
 
 		wg.Wait()
 
-		disconnectSockets(&runningSockets)
-
 		for _, server := range filteredServers {
-			go StartWebsocketConnections(server, &accountData, &runningSockets)
+			go plex.StartWebsocketConnections(server, &accountData, &runningSockets)
 			log.Printf("Sucessfully connected to %s WebSocket", server.Connection[0].URI)
 		}
 
@@ -213,6 +130,6 @@ func mainFunc(ctx context.Context) {
 }
 
 func onExit() {
-	LogoutDiscordClient()
+	discord.LogoutDiscordClient()
 	os.Exit(0)
 }
