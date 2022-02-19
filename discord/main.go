@@ -151,6 +151,8 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 			activityInfos.State = text
 			activityInfos.SmallText = text
 			activityInfos.Details = session.Media.Title
+		} else if session.Media.Type == "clip" { 
+			activityInfos.State = session.Media.Title
 		}
 		InitDiscordClient()
 		err := discord.SetActivity(activityInfos)

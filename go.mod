@@ -3,7 +3,7 @@ module gitlab.com/Arno500/plex-richpresence
 go 1.17
 
 require (
-	github.com/Arno500/go-plex-client v1.1.1
+	github.com/Arno500/go-plex-client v1.1.2
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
 	github.com/gen2brain/beeep v0.0.0-20210529141713-5586760f0cc1
@@ -19,6 +19,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/getlantern/context v0.0.0-20190109183933-c447772a6520 // indirect
 	github.com/getlantern/errors v1.0.1 // indirect
 	github.com/getlantern/golog v0.0.0-20211223150227-d4d95a44d873 // indirect
@@ -28,20 +29,35 @@ require (
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/go-toast/toast v0.0.0-20190211030409-01e6764cf0a4 // indirect
 	github.com/godbus/dbus/v5 v5.0.6 // indirect
-	github.com/gopherjs/gopherjs v0.0.0-20220104163920-15ed2e8cf2bd // indirect
+	github.com/gopherjs/gopherjs v0.0.0-20220219203646-6bee22ae7f6e // indirect
 	github.com/gopherjs/gopherwasm v1.1.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/neelance/astrewrite v0.0.0-20160511093645-99348263ae86 // indirect
+	github.com/neelance/sourcemap v0.0.0-20200213170602-2833bce08e4c // indirect
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
-	github.com/onsi/ginkgo v1.14.2 // indirect
-	github.com/onsi/gomega v1.10.4 // indirect
+	github.com/nxadm/tail v1.4.8 // indirect
+	github.com/onsi/ginkgo v1.16.5 // indirect
+	github.com/onsi/gomega v1.18.1 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749 // indirect
+	github.com/spf13/cobra v1.2.1 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.7.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect
-	golang.org/x/sys v0.0.0-20220207234003-57398862261d // indirect
+	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97 // indirect
+	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
+	golang.org/x/sys v0.0.0-20220209214540-3681064d5158 // indirect
+	golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1 // indirect
+	golang.org/x/tools v0.1.5 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
+	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
