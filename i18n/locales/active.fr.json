@@ -67,10 +67,6 @@
     "hash": "sha1-dcfe5ec8ca6f11fe77f161bab3ccf11d614ebb78",
     "other": "Affiche le temps restant sur Discord"
   },
-  "SeasonEpisodeProgress": {
-    "hash": "sha1-f2bdd946973ef864796eeb42cd9ed6e6f28b878b",
-    "other": "Saison {{.Season}}, épisode {{.Episode}}"
-  },
   "SignInNotificationDescription": {
     "hash": "sha1-cac792b71d8c1e672e11d54216cd727a16342a16",
     "other": "Vous pouvez maintenant vous connecter à Plex dans la fenêtre de votre navigateur"

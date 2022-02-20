@@ -16,7 +16,6 @@
   "QuitDescription": "Close the app and stop the rich presence from Plex",
   "RemainingMode": "Remaining",
   "RemainingModeDescription": "Will show the remaining in Discord",
-  "SeasonEpisodeProgress": "Season {{.Season}}, episode {{.Episode}}",
   "SignInNotificationDescription": "You can now login in the browser window that just opened!",
   "SignInNotificationTitle": "Plex Rich Presence login",
   "TimeMenu": "Time display",

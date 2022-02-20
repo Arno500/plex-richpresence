@@ -106,17 +106,8 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 
 	if stateAltered {
 		if session.Media.Type == "episode" {
-			// Season - Ep
-			activityInfos.State = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-				DefaultMessage: &i18npkg.Message{
-					ID:    "SeasonEpisodeProgress",
-					Other: "Season {{.Season}}, episode {{.Episode}}",
-				},
-				TemplateData: map[string]interface{}{
-					"Season":  session.Media.ParentIndex,
-					"Episode": session.Media.Index,
-				},
-			})
+			// Season - Ep and title
+			activityInfos.State = fmt.Sprintf("%02dx%02d - %s", session.Media.ParentIndex, session.Media.Index, session.Media.Title)
 			// Show
 			activityInfos.Details = session.Media.GrandparentTitle
 		} else if session.Media.Type == "movie" {
@@ -151,7 +142,8 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 			activityInfos.State = text
 			activityInfos.SmallText = text
 			activityInfos.Details = session.Media.Title
-		} else if session.Media.Type == "clip" { 
+		} else if session.Media.Type == "clip" {
+			// Trailer data (preroll)
 			activityInfos.State = session.Media.Title
 		}
 		InitDiscordClient()
