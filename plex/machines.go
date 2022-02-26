@@ -9,6 +9,9 @@ import (
 )
 
 func MachineIsEnabled(machine types.PlexPlayerKey) bool {
+	if machine.Product == "" {
+		return false
+	}
 	for _, item := range settings.StoredSettings.Devices {
 		if item.Identifier == machine.MachineIdentifier {
 			return item.Enabled
