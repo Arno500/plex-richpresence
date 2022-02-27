@@ -82,8 +82,8 @@ trigger-autoupdate:
     - |
       rclone config create scaleway s3 provider "Scaleway" env-auth "true" region "fr-par" endpoint "s3.fr-par.scw.cloud" acl "public-read" path-style true
     - |
-      rclone cp ./VERSION scaleway:plex-rich-presence/
+      rclone copy ./VERSION scaleway:plex-rich-presence/
     - |
-      rclone cp ./plex-rich-presence_* scaleway:plex-rich-presence/binaries
+      rclone copy ./plex-rich-presence_* scaleway:plex-rich-presence/binaries
   only:
     - tags
