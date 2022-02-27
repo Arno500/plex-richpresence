@@ -30,7 +30,7 @@ compile-linux:
     - GOOS=linux GOARCH=amd64 go build -tags unix -ldflags "-s -w -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=${CI_COMMIT_TAG}" -o $CI_PROJECT_DIR/${LINUX_AMD64_BINARY}
   artifacts:
     paths:
-      - plex-rich-presence_linux_64bits-*
+      - plex-rich-presence_linux_amd64-*
   only:
     - tags
 
@@ -42,7 +42,7 @@ compile-windows:
     - GOOS=windows GOARCH=amd64 go build -tags windows -ldflags "-s -w -extldflags '-static' -H=windowsgui -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=${CI_COMMIT_TAG}" -o ${WINDOWS_AMD64_BINARY}
   artifacts:
     paths:
-      - plex-rich-presence_win_64bits*
+      - plex-rich-presence_windows_amd64*
   only:
     - tags
 
