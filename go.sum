@@ -43,6 +43,8 @@ github.com/Arno500/go-plex-client v1.1.1 h1:XFrRUmICwUFwuHIU9Tbyy0BFYTzEFT8VMu8o
 github.com/Arno500/go-plex-client v1.1.1/go.mod h1:IE7DgfJcINptO5ya5iF2ryjRP/vVvX2agluwsduLyS8=
 github.com/Arno500/go-plex-client v1.1.2 h1:zk1gY+x9G3OP1dTLTlJh0Jg3wr9ytgFIqMN0Vh1FqIc=
 github.com/Arno500/go-plex-client v1.1.2/go.mod h1:IE7DgfJcINptO5ya5iF2ryjRP/vVvX2agluwsduLyS8=
+github.com/Arno500/go-plex-client v1.1.3 h1:Dxj92Uq7C/w2eQdDUb/6LfZWO2WNjMdGAeBLW0JqHJA=
+github.com/Arno500/go-plex-client v1.1.3/go.mod h1:IE7DgfJcINptO5ya5iF2ryjRP/vVvX2agluwsduLyS8=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v1.0.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
@@ -139,6 +141,8 @@ github.com/godbus/dbus/v5 v5.0.3/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5x
 github.com/godbus/dbus/v5 v5.0.4/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/godbus/dbus/v5 v5.0.6 h1:mkgN1ofwASrYnJ5W6U/BxG15eXXXjirgZc7CLqkcaro=
 github.com/godbus/dbus/v5 v5.0.6/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
+github.com/godbus/dbus/v5 v5.1.0 h1:4KLkAxT3aOY8Li4FRJe/KvhoNFFxo0m6fNuFUO8QJUk=
+github.com/godbus/dbus/v5 v5.1.0/go.mod h1:xhWf0FNVPg57R7Z0UbKHbJfkEywrmjJnf7w5xrFpKfA=
 github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
 github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b/go.mod h1:SBH7ygxi8pfUlaOkMMuAQtPIUF8ecWP5IEl/CR7VP2Q=
 github.com/golang/glog v1.0.0/go.mod h1:EWib/APOK0SL3dFbYqvxE3UYd8E6s1ouQ7iEp/0LWV4=
