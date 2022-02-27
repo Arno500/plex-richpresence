@@ -72,7 +72,9 @@ release:
 
 trigger-autoupdate:
   stage: trigger-autoupdate
-  image: rclone/rclone:latest
+  image:
+    name: rclone/rclone:latest
+    entrypoint: [""]
   before_script: []
   script:
     - |
