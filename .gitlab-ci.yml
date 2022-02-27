@@ -78,7 +78,7 @@ trigger-autoupdate:
   before_script: []
   script:
     - |
-      echo "${CI_COMMIT_TAG}" > VERSION
+      echo -n "${CI_COMMIT_TAG}" > VERSION
     - |
       rclone config create scaleway s3 provider "Scaleway" env-auth "true" region "fr-par" endpoint "s3.fr-par.scw.cloud" acl "public-read" path-style true
     - |
