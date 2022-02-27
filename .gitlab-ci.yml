@@ -84,6 +84,6 @@ trigger-autoupdate:
     - |
       rclone copy ./VERSION scaleway:plex-rich-presence/
     - |
-      rclone copy ./plex-rich-presence_* scaleway:plex-rich-presence/binaries
+      rclone copy ./${WINDOWS_AMD64_BINARY} scaleway:plex-rich-presence/binaries && rclone copy ./${LINUX_AMD64_BINARY} scaleway:plex-rich-presence/binaries
   only:
     - tags
