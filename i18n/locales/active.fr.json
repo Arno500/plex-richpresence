@@ -83,6 +83,10 @@
     "hash": "sha1-89b88123af13329f02207e400e630775de8d69b7",
     "other": "Change la manière d'afficher le temps dans Discord"
   },
+  "Version": {
+    "hash": "sha1-ae7e618707cc0ce2775f4fd932b7105adfed785c",
+    "other": "Version : {{.Version}}"
+  },
   "WatchingPhotos": {
     "hash": "sha1-2ac8fe3d2ecad76baaf054bfeca417b0785a164c",
     "other": "Regarde des photos"

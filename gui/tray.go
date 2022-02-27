@@ -8,6 +8,7 @@ import (
 	"github.com/nekr0z/systray"
 	i18npkg "github.com/nicksnyder/go-i18n/v2/i18n"
 
+	"gitlab.com/Arno500/plex-richpresence/autoupdate"
 	"gitlab.com/Arno500/plex-richpresence/i18n"
 	"gitlab.com/Arno500/plex-richpresence/icon"
 	"gitlab.com/Arno500/plex-richpresence/settings"
@@ -91,6 +92,13 @@ func SetupTray() {
 			Other: "Disconnect from Plex. Will immediately trigger the opening of the browser to reconnect",
 		}}))
 	systray.AddSeparator()
+	var versionItem = systray.AddMenuItemCheckbox(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+		TemplateData: map[string]string{"Version": autoupdate.Version},
+		DefaultMessage: &i18npkg.Message{
+			ID:    "Version",
+			Other: "Version: {{.Version}}",
+		}}), "", false)
+	versionItem.Disable()
 	TrayHandlers.QuitBtn = systray.AddMenuItem(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 		DefaultMessage: &i18npkg.Message{
 			ID:    "Quit",

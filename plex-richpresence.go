@@ -13,6 +13,7 @@ import (
 
 	plexpkg "github.com/Arno500/go-plex-client"
 
+	"gitlab.com/Arno500/plex-richpresence/autoupdate"
 	"gitlab.com/Arno500/plex-richpresence/discord"
 	"gitlab.com/Arno500/plex-richpresence/gui"
 	"gitlab.com/Arno500/plex-richpresence/i18n"
@@ -41,6 +42,7 @@ func onReady() {
 	i18n.InitLocale()
 	settings.Load()
 	gui.SetupTray()
+	autoupdate.Autoupdate()
 	ctx, cancelMain := context.WithCancel(context.Background())
 	go mainFunc(ctx)
 	defer func() {

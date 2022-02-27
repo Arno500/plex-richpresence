@@ -20,5 +20,6 @@
   "SignInNotificationTitle": "Plex Rich Presence login",
   "TimeMenu": "Time display",
   "TimeMenuDescription": "The way of displaying time in Discord",
+  "Version": "Version: {{.Version}}",
   "WatchingPhotos": "Watching photos"
 }

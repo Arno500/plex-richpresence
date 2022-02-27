@@ -6,7 +6,7 @@
         {
             "label": "Build optimized package (Windows)",
             "type": "shell",
-            "command": "go build -tags windows -ldflags='-s -w -H=windowsgui -extldflags '-static'' -o plex-rich-presence_win_64bits-dev.exe",
+            "command": "go build -tags windows -ldflags='-s -w -H=windowsgui -extldflags '-static' -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=dev' -o plex-rich-presence_windows_amd64-dev.exe",
             "problemMatcher": [
                 "$go"
             ],
@@ -26,7 +26,7 @@
         {
             "label": "Build optimized package (macOS)",
             "type": "shell",
-            "command": "go build -tags unix -ldflags='-s -w' -o plex-rich-presence_darwin_64bits-dev",
+            "command": "go build -tags unix -ldflags='-s -w -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=dev' -o plex-rich-presence_darwin_amd64-dev",
             "problemMatcher": [
                 "$go"
             ],
@@ -40,7 +40,7 @@
         {
             "label": "Build debug package (Windows)",
             "type": "shell",
-            "command": "go build -tags windows -ldflags='-H=windowsgui -extldflags '-static'' -o plex-rich-presence_win_64bits-dev.exe",
+            "command": "go build -tags windows -ldflags=\\\"-H=windowsgui -extldflags '-static' -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=dev\\\" -o plex-rich-presence_windows_amd64-dev.exe",
             "problemMatcher": [
                 "$go"
             ],

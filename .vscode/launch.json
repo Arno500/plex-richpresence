@@ -10,10 +10,10 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
-            "buildFlags": "-tags windows -ldflags='-H=windowsgui'"
+            "buildFlags": "-tags windows -ldflags='-H=windowsgui -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=dev'"
         },
         {
-            "name": "Debug plex-rich-presence_win_64bits-dev.exe",
+            "name": "Debug plex-rich-presence_windows_amd64-dev.exe",
             "type": "go",
             "request": "launch",
             "mode": "exec",

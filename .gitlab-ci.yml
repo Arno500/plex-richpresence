@@ -1,8 +1,7 @@
 variables:
-  # Please edit to your GitLab project
   REPO_NAME: gitlab.com/Arno500/plex-richpresence
-  LINUX_AMD64_BINARY: "plex-rich-presence_linux_64bits-${CI_COMMIT_TAG}"
-  WINDOWS_AMD64_BINARY: "plex-rich-presence_win_64bits-${CI_COMMIT_TAG}.exe"
+  LINUX_AMD64_BINARY: "plex-rich-presence_linux_amd64-${CI_COMMIT_TAG}"
+  WINDOWS_AMD64_BINARY: "plex-rich-presence_windows_amd64-${CI_COMMIT_TAG}.exe"
   PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/plex-rich-presence/${CI_COMMIT_TAG}"
 
 # The problem is that to be able to use go get, one needs to put
@@ -27,7 +26,7 @@ compile-linux:
   stage: build
   script:
     - apt-get update && apt-get -y install gcc libgtk-3-dev libayatana-appindicator3-dev
-    - GOOS=linux GOARCH=amd64 go build -tags unix -ldflags "-s -w" -o $CI_PROJECT_DIR/${LINUX_AMD64_BINARY}
+    - GOOS=linux GOARCH=amd64 go build -tags unix -ldflags "-s -w -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=${CI_COMMIT_TAG}" -o $CI_PROJECT_DIR/${LINUX_AMD64_BINARY}
   artifacts:
     paths:
       - plex-rich-presence_linux_64bits-*
@@ -39,7 +38,7 @@ compile-windows:
   allow_failure: false
   stage: build
   script:
-    - GOOS=windows GOARCH=amd64 go build -tags windows -ldflags "-s -w -extldflags '-static' -H=windowsgui" -o ${WINDOWS_AMD64_BINARY}
+    - GOOS=windows GOARCH=amd64 go build -tags windows -ldflags "-s -w -extldflags '-static' -H=windowsgui -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=${CI_COMMIT_TAG}" -o ${WINDOWS_AMD64_BINARY}
   artifacts:
     paths:
       - plex-rich-presence_win_64bits*
@@ -67,5 +66,21 @@ release:
       release-cli create --name "Release ${CI_COMMIT_TAG}" --tag-name "${CI_COMMIT_TAG}" \
         --assets-link "{\"name\":\"${WINDOWS_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${WINDOWS_AMD64_BINARY}\"}" \
         --assets-link "{\"name\":\"${LINUX_AMD64_BINARY}\",\"url\":\"${PACKAGE_REGISTRY_URL}/${LINUX_AMD64_BINARY}\"}"
+  only:
+    - tags
+
+trigger-autoupdate:
+  stage: trigger-autoupdate
+  image: rclone/rclone:latest
+  before_script: []
+  script:
+    - |
+      echo "${CI_COMMIT_TAG}" > VERSION
+    - |
+      rclone config create scaleway s3 provider "Scaleway" env-auth "true" region "fr-par" endpoint "s3.fr-par.scw.cloud" acl "public-read" path-style true
+    - |
+      rclone cp ./VERSION scaleway:plex-rich-presence/
+    - |
+      rclone cp ./plex-rich-presence_* scaleway:plex-rich-presence/binaries
   only:
     - tags
