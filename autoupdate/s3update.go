@@ -188,7 +188,7 @@ func runAutoUpdate(u Updater) error {
 		// The update completed, we can now restart the application without requiring any user action.
 
 		if runtime.GOOS == "windows" {
-			err = exec.Command(dest).Start()
+			exec.Command(dest).Start()
 		} else {
 			err = syscall.Exec(dest, os.Args, os.Environ())
 		}
