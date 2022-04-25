@@ -10,7 +10,11 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
-            "buildFlags": "-tags windows -ldflags='-H=windowsgui -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=dev'"
+            "buildFlags": "-tags windows -ldflags='-H=windowsgui -X gitlab.com/Arno500/plex-richpresence/autoupdate.Version=dev'",
+            "env": {
+                // "HTTP_PROXY": "localhost:8080",
+                // "HTTPS_PROXY": "localhost:8080",
+            }
         },
         {
             "name": "Debug plex-rich-presence_windows_amd64-dev.exe",
@@ -18,7 +22,7 @@
             "request": "launch",
             "mode": "exec",
             "program": "plex-rich-presence_win_64bits-dev.exe",
-            "preLaunchTask": "Build debug package (Windows)"
+            "preLaunchTask": "Build debug package (Windows)",
         }
     ]
 }

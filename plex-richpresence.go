@@ -100,6 +100,7 @@ func mainFunc(ctx context.Context) {
 		Plex = plex.GetPlexTv()
 		accountData, _ = Plex.MyAccount()
 		servers, _ := Plex.GetServers()
+		plex.RefreshDevicesCache(Plex)
 
 		filteredServers = nil
 		for _, server := range servers {

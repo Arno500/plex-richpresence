@@ -55,7 +55,7 @@ type PlexSessionKey struct {
 
 // PlexPlayerKey contains the specific informations about the player
 type PlexPlayerKey struct {
-	MachineIdentifier string
+	ClientIdentifier string
 	Title             string
 	Product           string
 }

@@ -103,6 +103,21 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 		mediaInfos, _ = Plex.GetMetadata(wsNotif.RatingKey)
 		mediaCache[wsNotif.RatingKey] = mediaInfos
 	}
+	var playerInfo types.PlexPlayerKey
+	if (mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier != "") {
+		playerInfo = types.PlexPlayerKey{
+			ClientIdentifier: 	mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier,
+			Title:             mediaInfos.MediaContainer.Metadata[0].Player.Title,
+			Product:           mediaInfos.MediaContainer.Metadata[0].Player.Product,
+		}
+	} else {
+		device := GetDevice(Plex, wsNotif.ClientIdentifier)
+		playerInfo = types.PlexPlayerKey{
+			ClientIdentifier: 	device.ClientIdentifier,
+			Title:             device.Name,
+			Product:           device.Product,
+		}
+	}
 	return types.PlexStableSession{
 		Media: types.PlexMediaKey{
 			RatingKey:        wsNotif.RatingKey,
@@ -121,12 +136,7 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 			State:      wsNotif.State,
 			ViewOffset: wsNotif.ViewOffset,
 		},
-		// TODO: Not confident, here...
-		Player: types.PlexPlayerKey{
-			MachineIdentifier: mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier,
-			Title:             mediaInfos.MediaContainer.Metadata[0].Player.Title,
-			Product:           mediaInfos.MediaContainer.Metadata[0].Player.Product,
-		},
+		Player: playerInfo,
 	}
 }
 func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1) types.PlexStableSession {
@@ -149,7 +159,7 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			ViewOffset: wsNotif.ViewOffset,
 		},
 		Player: types.PlexPlayerKey{
-			MachineIdentifier: session.Player.MachineIdentifier,
+			ClientIdentifier:  session.Player.MachineIdentifier,
 			Title:             session.Player.Title,
 			Product:           session.Player.Product,
 		},
