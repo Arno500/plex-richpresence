@@ -21,7 +21,7 @@
             "type": "go",
             "request": "launch",
             "mode": "exec",
-            "program": "plex-rich-presence_win_64bits-dev.exe",
+            "program": "plex-rich-presence_windows_amd64-dev.exe",
             "preLaunchTask": "Build debug package (Windows)",
         }
     ]
