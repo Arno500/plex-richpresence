@@ -3,7 +3,7 @@ module gitlab.com/Arno500/plex-richpresence
 go 1.18
 
 require (
-	github.com/Arno500/go-plex-client v1.1.6
+	github.com/Arno500/go-plex-client v1.1.7
 	github.com/aws/aws-sdk-go v1.44.3
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
