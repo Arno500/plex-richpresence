@@ -61,6 +61,8 @@ github.com/Arno500/go-plex-client v1.1.5 h1:U26mESYtLhJvhHuE8/lvf+OVfhbobiMJxrXG
 github.com/Arno500/go-plex-client v1.1.5/go.mod h1:IE7DgfJcINptO5ya5iF2ryjRP/vVvX2agluwsduLyS8=
 github.com/Arno500/go-plex-client v1.1.6 h1:9LgFhd/aLUugfnoxBGWi/6o8lfQTfJ4ATZYMOwWkA1g=
 github.com/Arno500/go-plex-client v1.1.6/go.mod h1:IE7DgfJcINptO5ya5iF2ryjRP/vVvX2agluwsduLyS8=
+github.com/Arno500/go-plex-client v1.1.7 h1:utYQWJc7OWj/0Oe1AZZZsHZT43HQo+BTvoLRfVZyEEo=
+github.com/Arno500/go-plex-client v1.1.7/go.mod h1:IE7DgfJcINptO5ya5iF2ryjRP/vVvX2agluwsduLyS8=
 github.com/BurntSushi/toml v0.3.1 h1:WXkYYl6Yr3qBf1K79EBnL4mak0OimBfB0XUf9Vl28OQ=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/BurntSushi/toml v1.0.0/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbicEuybxQ=
