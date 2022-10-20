@@ -76,19 +76,21 @@ func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg 
 
 	found := false
 
-	for _, uri := range server.Connection {
-		parsedURL, _ := url.Parse(uri.URI)
+	for i := len(server.Connection) - 1; i >= 0; i-- {
+		connection := server.Connection[i]
+		parsedURL, _ := url.Parse(connection.URI)
 		log.Printf("%s: Trying to connect to %s", server.Name, parsedURL.Host)
 		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 400*time.Millisecond)
 		if conn != nil {
 			log.Printf("%s: %s was successfully contacted", server.Name, parsedURL.Host)
 			server.Connection = nil
-			server.Connection = append(server.Connection, uri)
+			server.Connection = append(server.Connection, connection)
 			*destinationSlice = append(*destinationSlice, server)
 			found = true
 			break
 		}
 	}
+
 	if !found {
 		log.Printf("Couldn't find any working address for server %s", server.Name)
 	}
@@ -104,18 +106,18 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 		mediaCache[wsNotif.RatingKey] = mediaInfos
 	}
 	var playerInfo types.PlexPlayerKey
-	if (mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier != "") {
+	if mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier != "" {
 		playerInfo = types.PlexPlayerKey{
-			ClientIdentifier: 	mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier,
-			Title:             mediaInfos.MediaContainer.Metadata[0].Player.Title,
-			Product:           mediaInfos.MediaContainer.Metadata[0].Player.Product,
+			ClientIdentifier: mediaInfos.MediaContainer.Metadata[0].Player.MachineIdentifier,
+			Title:            mediaInfos.MediaContainer.Metadata[0].Player.Title,
+			Product:          mediaInfos.MediaContainer.Metadata[0].Player.Product,
 		}
 	} else {
 		device := GetDevice(Plex, wsNotif.ClientIdentifier)
 		playerInfo = types.PlexPlayerKey{
-			ClientIdentifier: 	device.ClientIdentifier,
-			Title:             device.Name,
-			Product:           device.Product,
+			ClientIdentifier: device.ClientIdentifier,
+			Title:            device.Name,
+			Product:          device.Product,
 		}
 	}
 	return types.PlexStableSession{
@@ -159,9 +161,9 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			ViewOffset: wsNotif.ViewOffset,
 		},
 		Player: types.PlexPlayerKey{
-			ClientIdentifier:  session.Player.MachineIdentifier,
-			Title:             session.Player.Title,
-			Product:           session.Player.Product,
+			ClientIdentifier: session.Player.MachineIdentifier,
+			Title:            session.Player.Title,
+			Product:          session.Player.Product,
 		},
 	}
 }
