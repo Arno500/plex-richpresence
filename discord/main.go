@@ -3,20 +3,28 @@ package discord
 import (
 	// "fmt"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/Arno500/go-plex-client"
 	discord "github.com/hugolgst/rich-go/client"
 	i18npkg "github.com/nicksnyder/go-i18n/v2/i18n"
 	"gitlab.com/Arno500/plex-richpresence/i18n"
 	"gitlab.com/Arno500/plex-richpresence/settings"
 	"gitlab.com/Arno500/plex-richpresence/types"
+
+	"github.com/koffeinsource/go-imgur"
 )
 
-var currentPlayState types.PlayState
+const imgurClientID = "86fc159a556c60f"
 
-//InitDiscordClient prepares Discord's RPC API to allow Rich Presence
+var currentPlayState types.PlayState
+var imgurInstance, _ = imgur.NewClient(http.DefaultClient, imgurClientID, "")
+
+// InitDiscordClient prepares Discord's RPC API to allow Rich Presence
 func InitDiscordClient() {
 	if currentPlayState.DiscordConnected {
 		return
@@ -36,21 +44,62 @@ func LogoutDiscordClient() {
 	}
 }
 
+func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
+	if currentPlayState.Thumb.PlexThumbUrl == thumbKey {
+		if currentPlayState.Thumb.ImgurLink != "" {
+			return currentPlayState.Thumb.ImgurLink
+		} else {
+			return "plex"
+		}
+	}
+	if currentPlayState.Thumb.DeleteKey != "" {
+		req, _ := http.NewRequest("DELETE", "https://api.imgur.com/3/image/"+currentPlayState.Thumb.DeleteKey, nil)
+		req.Header.Add("Authorization", "Client-ID "+imgurClientID)
+		_, err := http.DefaultClient.Do(req)
+		if err != nil {
+			log.Println("Couldn't delete the previous image: ", err)
+		}
+	}
+	currentPlayState.Thumb.PlexThumbUrl = thumbKey
+	plexThumbLink := fmt.Sprintf("%s/photo/:/transcode?width=450&height=253&minSize=1&upscale=1&X-Plex-Token=%s&url=%s", plexInstance.URL, plexInstance.Token, thumbKey)
+
+	thumbResp, err := http.Get(plexThumbLink)
+	if err != nil {
+		log.Printf("Couldn't get thumbnail from Plex (%s)", err)
+		return "plex"
+	}
+	b, err := io.ReadAll(thumbResp.Body)
+	if err != nil {
+		log.Printf("Couldn't read thumbnail from Plex (%s)", err)
+		return "plex"
+	}
+
+	imgInfo, _, err := imgurInstance.UploadImage(b, "", "file", "", "")
+	if err != nil {
+		log.Println("Error uploading image to imgur: ", err)
+		return "plex"
+	}
+	currentPlayState.Thumb.ImgurLink = imgInfo.Link
+	currentPlayState.Thumb.DeleteKey = imgInfo.Deletehash
+	return imgInfo.Link
+}
+
 // SetRichPresence allows to send Rich Presence informations to Plex from a session info
 func SetRichPresence(session types.PlexStableSession, owned bool) {
 	now := time.Now()
-	stateAltered := false
+	currentPlayState.Alteration.Item = false
+	currentPlayState.Alteration.Time = false
 	activityInfos := discord.Activity{
 		LargeImage: "plex",
 		LargeText:  "Plex",
 	}
-	if currentPlayState.PlayingItem.Media.RatingKey != session.Media.RatingKey {
-		currentPlayState.PlayingItem = session
-		stateAltered = true
+	if currentPlayState.PlayingItem == nil || currentPlayState.PlayingItem.Media.RatingKey != session.Media.RatingKey {
+		currentPlayState.PlayingItem = &session
+		currentPlayState.Alteration.Item = true
 	}
 	if currentPlayState.PlayState != session.Session.State {
 		currentPlayState.PlayState = session.Session.State
-		stateAltered = true
+		currentPlayState.Alteration.Time = true
 	}
 	if session.Session.State == "paused" {
 		activityInfos.SmallImage = "pause"
@@ -75,7 +124,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 				calculatedStartTime := now.Add(-progress)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedStartTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedStartTime)) {
 					log.Printf("A seeking or a media change was detected, adjusting")
-					stateAltered = true
+					currentPlayState.Alteration.Time = true
 					currentPlayState.LastCalculatedTime = calculatedStartTime
 				}
 				activityInfos.Timestamps = &discord.Timestamps{
@@ -87,7 +136,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 				calculatedEndTime := now.Add(remaining)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedEndTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedEndTime)) {
 					log.Printf("A seeking or a media change was detected, adjusting")
-					stateAltered = true
+					currentPlayState.Alteration.Time = true
 					currentPlayState.LastCalculatedTime = calculatedEndTime
 				}
 				activityInfos.Timestamps = &discord.Timestamps{
@@ -104,12 +153,13 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 		return
 	}
 
-	if stateAltered {
+	if currentPlayState.Alteration.Item {
 		if session.Media.Type == "episode" {
 			// Season - Ep and title
 			activityInfos.State = fmt.Sprintf("%02dx%02d - %s", session.Media.ParentIndex, session.Media.Index, session.Media.Title)
 			// Show
 			activityInfos.Details = session.Media.GrandparentTitle
+			activityInfos.LargeImage = getThumbnailLink(session.Media.GrandparentThumbnail, session.PlexInstance)
 		} else if session.Media.Type == "movie" {
 			var formattedMovieName string
 			if session.Media.Year > 0 {
@@ -125,12 +175,14 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 				activityInfos.State = "(⌐■_■)"
 				activityInfos.Details = formattedMovieName
 			}
+			activityInfos.LargeImage = getThumbnailLink(session.Media.Thumbnail, session.PlexInstance)
 		} else if session.Media.Type == "track" {
 			if session.Media.OriginalTitle != "" {
 				activityInfos.State = session.Media.OriginalTitle
 			} else {
 				activityInfos.State = session.Media.GrandparentTitle
 			}
+			activityInfos.LargeImage = getThumbnailLink(session.Media.Thumbnail, session.PlexInstance)
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, session.Media.ParentTitle)
 		} else if session.Media.Type == "photo" {
 			text := i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
@@ -145,6 +197,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 		} else if session.Media.Type == "clip" {
 			// Trailer data (preroll)
 			activityInfos.State = session.Media.Title
+			activityInfos.SmallText = "Preroll"
 		}
 		InitDiscordClient()
 		err := discord.SetActivity(activityInfos)

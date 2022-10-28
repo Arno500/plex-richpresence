@@ -22,14 +22,24 @@ type PlayState struct {
 	LastCalculatedTime time.Time
 	PlayState          string
 	DiscordConnected   bool
-	PlayingItem        PlexStableSession
+	PlayingItem        *PlexStableSession
+	Thumb              struct {
+		PlexThumbUrl string
+		DeleteKey    string
+		ImgurLink    string
+	}
+	Alteration struct {
+		Item bool
+		Time bool
+	}
 }
 
 // PlexStableSession is the object we send to the function that send the Rich Presence
 type PlexStableSession struct {
-	Media   PlexMediaKey
-	Session PlexSessionKey
-	Player  PlexPlayerKey
+	Media        PlexMediaKey
+	Session      PlexSessionKey
+	Player       PlexPlayerKey
+	PlexInstance *plex.Plex
 }
 
 // PlexMediaKey is a subkey of PlexStableSession
@@ -38,6 +48,8 @@ type PlexMediaKey struct {
 	Type             string
 	Duration         int64
 	Director         []plex.TaggedData
+	Thumbnail        string
+	GrandparentThumbnail  string
 	Index            int64
 	ParentIndex      int64
 	GrandparentTitle string
@@ -56,8 +68,8 @@ type PlexSessionKey struct {
 // PlexPlayerKey contains the specific informations about the player
 type PlexPlayerKey struct {
 	ClientIdentifier string
-	Title             string
-	Product           string
+	Title            string
+	Product          string
 }
 
 // PinSettings corresponds to the stored pin data from Plex

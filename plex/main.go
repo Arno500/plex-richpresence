@@ -80,9 +80,12 @@ func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg 
 		connection := server.Connection[i]
 		parsedURL, _ := url.Parse(connection.URI)
 		log.Printf("%s: Trying to connect to %s", server.Name, parsedURL.Host)
-		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 400*time.Millisecond)
+		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 800*time.Millisecond)
 		if conn != nil {
 			log.Printf("%s: %s was successfully contacted", server.Name, parsedURL.Host)
+			if connection.Relay {
+				log.Printf("%s: This is also a relay, so we should be fine to display the image", server.Name)
+			}
 			server.Connection = nil
 			server.Connection = append(server.Connection, connection)
 			*destinationSlice = append(*destinationSlice, server)
@@ -122,39 +125,44 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 	}
 	return types.PlexStableSession{
 		Media: types.PlexMediaKey{
-			RatingKey:        wsNotif.RatingKey,
-			Type:             mediaInfos.MediaContainer.Metadata[0].Type,
-			Duration:         int64(mediaInfos.MediaContainer.Metadata[0].Duration),
-			Index:            mediaInfos.MediaContainer.Metadata[0].Index,
-			ParentIndex:      mediaInfos.MediaContainer.Metadata[0].ParentIndex,
-			Director:         mediaInfos.MediaContainer.Metadata[0].Director,
-			GrandparentTitle: mediaInfos.MediaContainer.Metadata[0].GrandparentTitle,
-			OriginalTitle:    mediaInfos.MediaContainer.Metadata[0].OriginalTitle,
-			ParentTitle:      mediaInfos.MediaContainer.Metadata[0].ParentTitle,
-			Title:            mediaInfos.MediaContainer.Metadata[0].Title,
-			Year:             mediaInfos.MediaContainer.Metadata[0].Year,
+			RatingKey:            wsNotif.RatingKey,
+			Type:                 mediaInfos.MediaContainer.Metadata[0].Type,
+			Duration:             int64(mediaInfos.MediaContainer.Metadata[0].Duration),
+			Index:                mediaInfos.MediaContainer.Metadata[0].Index,
+			ParentIndex:          mediaInfos.MediaContainer.Metadata[0].ParentIndex,
+			Director:             mediaInfos.MediaContainer.Metadata[0].Director,
+			GrandparentTitle:     mediaInfos.MediaContainer.Metadata[0].GrandparentTitle,
+			OriginalTitle:        mediaInfos.MediaContainer.Metadata[0].OriginalTitle,
+			ParentTitle:          mediaInfos.MediaContainer.Metadata[0].ParentTitle,
+			Title:                mediaInfos.MediaContainer.Metadata[0].Title,
+			Year:                 mediaInfos.MediaContainer.Metadata[0].Year,
+			Thumbnail:            mediaInfos.MediaContainer.Metadata[0].Thumb,
+			GrandparentThumbnail: mediaInfos.MediaContainer.Metadata[0].GrandparentThumb,
 		},
 		Session: types.PlexSessionKey{
 			State:      wsNotif.State,
 			ViewOffset: wsNotif.ViewOffset,
 		},
-		Player: playerInfo,
+		Player:       playerInfo,
+		PlexInstance: Plex,
 	}
 }
-func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1) types.PlexStableSession {
+func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1, Plex *plex.Plex) types.PlexStableSession {
 	return types.PlexStableSession{
 		Media: types.PlexMediaKey{
-			RatingKey:        session.RatingKey,
-			Type:             session.Type,
-			Duration:         session.Duration,
-			Index:            session.Index,
-			ParentIndex:      session.ParentIndex,
-			Director:         session.Director,
-			GrandparentTitle: session.GrandparentTitle,
-			OriginalTitle:    session.OriginalTitle,
-			ParentTitle:      session.ParentTitle,
-			Title:            session.Title,
-			Year:             session.Year,
+			RatingKey:            session.RatingKey,
+			Type:                 session.Type,
+			Duration:             session.Duration,
+			Index:                session.Index,
+			ParentIndex:          session.ParentIndex,
+			Director:             session.Director,
+			GrandparentTitle:     session.GrandparentTitle,
+			OriginalTitle:        session.OriginalTitle,
+			ParentTitle:          session.ParentTitle,
+			Title:                session.Title,
+			Year:                 session.Year,
+			Thumbnail:            session.Metadata.Thumb,
+			GrandparentThumbnail: session.Metadata.GrandparentThumb,
 		},
 		Session: types.PlexSessionKey{
 			State:      wsNotif.State,
@@ -165,6 +173,7 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			Title:            session.Player.Title,
 			Product:          session.Player.Product,
 		},
+		PlexInstance: Plex,
 	}
 }
 
@@ -206,7 +215,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 				}
 				for _, session := range sessions.MediaContainer.Metadata {
 					if notif.SessionKey == session.SessionKey && session.User.Title == accountData.Title {
-						stableSession = createSessionFromSessionObject(notif, session)
+						stableSession = createSessionFromSessionObject(notif, session, Plex)
 						sessionCache[notif.SessionKey] = stableSession
 						break
 					}
