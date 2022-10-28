@@ -31,7 +31,8 @@ func InitDiscordClient() {
 	}
 	err := discord.Login("803556010307616788")
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
+		return
 	}
 	currentPlayState.DiscordConnected = true
 }
@@ -86,6 +87,10 @@ func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 
 // SetRichPresence allows to send Rich Presence informations to Plex from a session info
 func SetRichPresence(session types.PlexStableSession, owned bool) {
+	InitDiscordClient()
+	if !currentPlayState.DiscordConnected {
+		return
+	}
 	now := time.Now()
 	currentPlayState.Alteration.Item = false
 	currentPlayState.Alteration.Time = false
@@ -199,10 +204,10 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 			activityInfos.State = session.Media.Title
 			activityInfos.SmallText = "Preroll"
 		}
-		InitDiscordClient()
 		err := discord.SetActivity(activityInfos)
 		if err != nil {
 			log.Printf("An error occured when setting the activity in Discord: %v", err)
+			currentPlayState.DiscordConnected = false
 		} else {
 			log.Printf("Discord activity set")
 		}
