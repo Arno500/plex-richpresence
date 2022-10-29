@@ -76,18 +76,17 @@ func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg 
 
 	found := false
 
-	for i := len(server.Connection) - 1; i >= 0; i-- {
-		connection := server.Connection[i]
-		parsedURL, _ := url.Parse(connection.URI)
+	for _, uri := range server.Connection {
+		parsedURL, _ := url.Parse(uri.URI)
 		log.Printf("%s: Trying to connect to %s", server.Name, parsedURL.Host)
 		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 800*time.Millisecond)
 		if conn != nil {
 			log.Printf("%s: %s was successfully contacted", server.Name, parsedURL.Host)
-			if connection.Relay {
-				log.Printf("%s: This is also a relay, so we should be fine to display the image", server.Name)
+			if uri.Relay {
+				log.Printf("%s: This is a relay, so we should have correct access anyway", server.Name)
 			}
 			server.Connection = nil
-			server.Connection = append(server.Connection, connection)
+			server.Connection = append(server.Connection, uri)
 			*destinationSlice = append(*destinationSlice, server)
 			found = true
 			break
