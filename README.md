@@ -2,6 +2,24 @@
 
 > Note: This was heavily inspired from [Ombrelin's Plex Rich Presence](https://github.com/Ombrelin/plex-rich-presence) (a colleague in the same school as me 😀) in Java. Since I disliked Java and the idea that I needed to install the right version of something, + because the multi-servers support was somewhat flaky, I decided to create mine in Golang.
 
+# Features
+
+General:
+- Start on boot
+- Transparent auto-updater
+- Multilanguages (currently only English and French, feel free to add a new one!)
+
+Plex:
+- SSO integration
+- Work for unexposed servers (but they still need to be owned by a Plex account)
+- Select which player you want to track
+- Track new players automatically or not
+- Track all the servers that you own/are invited to
+
+Rich Presence:
+- Cover art/Thumbnail display
+- Elapsed or remaining time display
+
 # Downloads
 
 Everything is available in the releases here: https://github.com/Arno500/plex-richpresence/releases
