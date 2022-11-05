@@ -107,6 +107,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 		currentPlayState.Alteration.Time = true
 	}
 	if session.Session.State == "paused" {
+		currentPlayState.Alteration.Time = true
 		activityInfos.SmallImage = "pause"
 		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 			DefaultMessage: &i18npkg.Message{
@@ -115,6 +116,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 			},
 		})
 	} else if (session.Session.State == "playing" || session.Session.State == "buffering") && session.Media.Type != "photo" {
+		currentPlayState.Alteration.Time = true
 		activityInfos.SmallImage = "play"
 		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 			DefaultMessage: &i18npkg.Message{
@@ -158,7 +160,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 		return
 	}
 
-	if currentPlayState.Alteration.Item {
+	if currentPlayState.Alteration.Item || currentPlayState.Alteration.Time {
 		if session.Media.Type == "episode" {
 			// Season - Ep and title
 			activityInfos.State = fmt.Sprintf("%02dx%02d - %s", session.Media.ParentIndex, session.Media.Index, session.Media.Title)
