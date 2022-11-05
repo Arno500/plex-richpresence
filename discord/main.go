@@ -189,7 +189,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 			} else {
 				activityInfos.State = session.Media.GrandparentTitle
 			}
-			activityInfos.LargeImage = getThumbnailLink(session.Media.Thumbnail, session.PlexInstance)
+			activityInfos.LargeImage = getThumbnailLink(session.Media.ParentThumbnail, session.PlexInstance)
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, session.Media.ParentTitle)
 		} else if session.Media.Type == "photo" {
 			text := i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{

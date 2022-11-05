@@ -44,19 +44,20 @@ type PlexStableSession struct {
 
 // PlexMediaKey is a subkey of PlexStableSession
 type PlexMediaKey struct {
-	RatingKey        string
-	Type             string
-	Duration         int64
-	Director         []plex.TaggedData
-	Thumbnail        string
-	GrandparentThumbnail  string
-	Index            int64
-	ParentIndex      int64
-	GrandparentTitle string
-	OriginalTitle    string
-	ParentTitle      string
-	Title            string
-	Year             int
+	RatingKey            string
+	Type                 string
+	Duration             int64
+	Director             []plex.TaggedData
+	Thumbnail            string
+	ParentThumbnail      string
+	GrandparentThumbnail string
+	Index                int64
+	ParentIndex          int64
+	GrandparentTitle     string
+	OriginalTitle        string
+	ParentTitle          string
+	Title                string
+	Year                 int
 }
 
 // PlexSessionKey is a subkey of PlexStableSession

@@ -136,6 +136,7 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 			Title:                mediaInfos.MediaContainer.Metadata[0].Title,
 			Year:                 mediaInfos.MediaContainer.Metadata[0].Year,
 			Thumbnail:            mediaInfos.MediaContainer.Metadata[0].Thumb,
+			ParentThumbnail:      mediaInfos.MediaContainer.Metadata[0].ParentThumb,
 			GrandparentThumbnail: mediaInfos.MediaContainer.Metadata[0].GrandparentThumb,
 		},
 		Session: types.PlexSessionKey{
@@ -161,6 +162,7 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			Title:                session.Title,
 			Year:                 session.Year,
 			Thumbnail:            session.Metadata.Thumb,
+			ParentThumbnail:      session.Metadata.ParentThumb,
 			GrandparentThumbnail: session.Metadata.GrandparentThumb,
 		},
 		Session: types.PlexSessionKey{
