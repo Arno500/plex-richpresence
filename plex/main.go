@@ -205,7 +205,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 		notif := n.PlaySessionStateNotification[0]
 		if owned {
 			cacheEntry, entryExists := sessionCache[notif.SessionKey]
-			if entryExists {
+			if entryExists && cacheEntry.Media.RatingKey == notif.RatingKey {
 				cacheEntry.Session.State = notif.State
 				cacheEntry.Session.ViewOffset = notif.ViewOffset
 				stableSession = cacheEntry
