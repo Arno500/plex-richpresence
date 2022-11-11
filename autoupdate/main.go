@@ -2,6 +2,7 @@ package autoupdate
 
 import (
 	"log"
+	"runtime"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
@@ -15,10 +16,10 @@ func Autoupdate() {
 	if Version == "dev" {
 		return
 	}
-	err := runAutoUpdate(Updater{
+	var updater = Updater{
 		CurrentVersion: Version,
 		S3Bucket:       "plex-rich-presence",
-		S3ReleaseKey:   "plex-rich-presence_{{OS}}_{{ARCH}}-{{VERSION}}.exe",
+		S3ReleaseKey:   "plex-rich-presence_{{OS}}_{{ARCH}}-{{VERSION}}",
 		S3Path:         "binaries",
 		S3VersionKey:   "VERSION",
 		AWSConfig: &aws.Config{
@@ -27,7 +28,11 @@ func Autoupdate() {
 			Credentials:      credentials.AnonymousCredentials,
 			S3ForcePathStyle: aws.Bool(true),
 		},
-	})
+	}
+	if runtime.GOOS == "windows" {
+		updater.S3ReleaseKey = updater.S3ReleaseKey + ".exe"
+	}
+	err := runAutoUpdate(updater)
 	if err != nil {
 		log.Println("Error while checking for updates: ", err)
 	}
