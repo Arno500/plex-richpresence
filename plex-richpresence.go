@@ -113,8 +113,11 @@ func mainFunc(ctx context.Context) {
 		wg.Wait()
 
 		for _, server := range filteredServers {
-			go plex.StartWebsocketConnections(server, &accountData, &runningSockets)
-			log.Printf("Sucessfully connected to %s WebSocket", server.Connection[0].URI)
+			// Second verification in case we have some concurrency issues
+			if _, ok := runningSockets[server.ClientIdentifier]; !ok {
+				go plex.StartWebsocketConnections(server, &accountData, &runningSockets)
+				log.Printf("Sucessfully connected to %s WebSocket", server.Connection[0].URI)
+			}
 		}
 
 		// Basically wait 60 seconds in another thread, then finish the loop iteration to scan servers again (thus refreshing everything)

@@ -189,13 +189,17 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 
 	cancelChan := make(chan interface{})
 
+	onConnectionClose := func() {
+		delete(*runningSockets, server.ClientIdentifier)
+		StartWebsocketConnections(server, accountData, runningSockets)
+	}
+
 	onError := func(err error) {
 		cancelChan <- true
 		log.Printf("Couldn't connect or lost connection to %s", server.Name)
 		log.Println(err)
 		time.Sleep(connectBackoff.Duration())
-		delete(*runningSockets, server.ClientIdentifier)
-		StartWebsocketConnections(server, accountData, runningSockets)
+		onConnectionClose()
 	}
 
 	events := plex.NewNotificationEvents()
@@ -236,7 +240,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 		}
 	})
 
-	Plex.SubscribeToNotifications(events, cancelChan, onError)
+	Plex.SubscribeToNotifications(events, cancelChan, onError, onConnectionClose)
 	(*runningSockets)[server.ClientIdentifier] = &cancelChan
 	connectBackoff.Reset()
 }
