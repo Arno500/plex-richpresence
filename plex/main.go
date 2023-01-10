@@ -122,6 +122,9 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 			Product:          device.Product,
 		}
 	}
+	guid, _ := url.Parse(mediaInfos.MediaContainer.Metadata[0].GUID)
+	parentGuid, _ := url.Parse(mediaInfos.MediaContainer.Metadata[0].ParentGUID)
+	grandparentGuid, _ := url.Parse(mediaInfos.MediaContainer.Metadata[0].GrandparentGUID)
 	return types.PlexStableSession{
 		Media: types.PlexMediaKey{
 			RatingKey:            wsNotif.RatingKey,
@@ -138,6 +141,9 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 			Thumbnail:            mediaInfos.MediaContainer.Metadata[0].Thumb,
 			ParentThumbnail:      mediaInfos.MediaContainer.Metadata[0].ParentThumb,
 			GrandparentThumbnail: mediaInfos.MediaContainer.Metadata[0].GrandparentThumb,
+			GUID:                 *guid,
+			ParentGUID:           *parentGuid,
+			GrandparentGUID:      *grandparentGuid,
 		},
 		Session: types.PlexSessionKey{
 			State:      wsNotif.State,
@@ -149,6 +155,8 @@ func createSessionFromWSNotif(wsNotif plex.PlaySessionStateNotification, Plex *p
 }
 func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, session plex.MetadataV1, Plex *plex.Plex) types.PlexStableSession {
 	guid, _ := url.Parse(session.GUID)
+	parentGuid, _ := url.Parse(session.ParentGUID)
+	grandparentGuid, _ := url.Parse(session.GrandparentGUID)
 	return types.PlexStableSession{
 		Media: types.PlexMediaKey{
 			RatingKey:            session.RatingKey,
@@ -166,6 +174,8 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 			ParentThumbnail:      session.Metadata.ParentThumb,
 			GrandparentThumbnail: session.Metadata.GrandparentThumb,
 			GUID:                 *guid,
+			ParentGUID:           *parentGuid,
+			GrandparentGUID:      *grandparentGuid,
 		},
 		Session: types.PlexSessionKey{
 			State:      wsNotif.State,

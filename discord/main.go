@@ -198,7 +198,7 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 					Other: "Track details on plex.tv",
 				},
 			}),
-				Url:   "https://listen.plex.tv/track/" + path.Base(session.Media.GUID.Path),
+				Url:  fmt.Sprintf("https://listen.plex.tv/track/%s?parentGuid=%s&grandparentGuid=%s", path.Base(session.Media.GUID.EscapedPath()), path.Base(session.Media.ParentGUID.EscapedPath()), path.Base(session.Media.GrandparentGUID.EscapedPath())),
 			})
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, session.Media.ParentTitle)
 		} else if session.Media.Type == "photo" {

@@ -47,6 +47,8 @@ type PlexStableSession struct {
 type PlexMediaKey struct {
 	RatingKey            string
 	GUID                 url.URL
+	ParentGUID           url.URL
+	GrandparentGUID      url.URL
 	Type                 string
 	Duration             int64
 	Director             []plex.TaggedData
