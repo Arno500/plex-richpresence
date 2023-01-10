@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"path"
 	"strconv"
 	"time"
 
@@ -190,6 +191,15 @@ func SetRichPresence(session types.PlexStableSession, owned bool) {
 				activityInfos.State = session.Media.GrandparentTitle
 			}
 			activityInfos.LargeImage = getThumbnailLink(session.Media.ParentThumbnail, session.PlexInstance)
+			activityInfos.Buttons = append(activityInfos.Buttons, &discord.Button{
+				Label: i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+				DefaultMessage: &i18npkg.Message{
+					ID:    "TrackDetails",
+					Other: "Track details on plex.tv",
+				},
+			}),
+				Url:   "https://listen.plex.tv/track/" + path.Base(session.Media.GUID.Path),
+			})
 			activityInfos.Details = fmt.Sprintf("%s (%s)", session.Media.Title, session.Media.ParentTitle)
 		} else if session.Media.Type == "photo" {
 			text := i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{

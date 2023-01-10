@@ -1,6 +1,7 @@
 package types
 
 import (
+	"net/url"
 	"time"
 
 	"github.com/Arno500/go-plex-client"
@@ -45,6 +46,7 @@ type PlexStableSession struct {
 // PlexMediaKey is a subkey of PlexStableSession
 type PlexMediaKey struct {
 	RatingKey            string
+	GUID                 url.URL
 	Type                 string
 	Duration             int64
 	Director             []plex.TaggedData
