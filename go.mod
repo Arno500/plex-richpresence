@@ -3,7 +3,7 @@ module gitlab.com/Arno500/plex-richpresence
 go 1.18
 
 require (
-	github.com/Arno500/go-plex-client v1.1.10
+	github.com/Arno500/go-plex-client v1.1.11
 	github.com/aws/aws-sdk-go v1.44.176
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
@@ -44,7 +44,7 @@ require (
 	github.com/koffeinsource/go-imgur v0.4.1
 	github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d // indirect
 	github.com/onsi/ginkgo v1.16.5 // indirect
-	github.com/onsi/gomega v1.24.1 // indirect
+	github.com/onsi/gomega v1.24.2 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	go.opentelemetry.io/otel v1.11.2 // indirect

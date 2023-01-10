@@ -186,7 +186,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 	cancelChan := make(chan interface{})
 
 	onConnectionClose := func() {
-		delete(*runningSockets, server.Name)
+		delete(*runningSockets, server.ClientIdentifier)
 	}
 
 	onError := func(err error) {
