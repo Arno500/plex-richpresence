@@ -8,11 +8,9 @@ import (
 	"os"
 	"runtime"
 	"strconv"
-	"sync"
 	"time"
 
 	"github.com/Arno500/go-plex-client"
-	"github.com/jpillora/backoff"
 	"gitlab.com/Arno500/plex-richpresence/discord"
 	"gitlab.com/Arno500/plex-richpresence/settings"
 	"gitlab.com/Arno500/plex-richpresence/types"
@@ -71,11 +69,7 @@ func GetPlex(instance string, token string) *plex.Plex {
 }
 
 // GetGoodURI finds the working URL for a working server
-func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg *sync.WaitGroup) {
-	defer wg.Done()
-
-	found := false
-
+func GetGoodURI(server *plex.PMSDevices) (plex.Connection, bool) {
 	for _, uri := range server.Connection {
 		parsedURL, _ := url.Parse(uri.URI)
 		log.Printf("%s: Trying to connect to %s", server.Name, parsedURL.Host)
@@ -85,17 +79,12 @@ func GetGoodURI(server plex.PMSDevices, destinationSlice *[]plex.PMSDevices, wg 
 			if uri.Relay {
 				log.Printf("%s: This is a relay, so we should have correct access anyway", server.Name)
 			}
-			server.Connection = nil
-			server.Connection = append(server.Connection, uri)
-			*destinationSlice = append(*destinationSlice, server)
-			found = true
-			break
+			return uri, true
 		}
 	}
 
-	if !found {
-		log.Printf("Couldn't find any working address for server %s", server.Name)
-	}
+	log.Printf("Couldn't find any working address for server %s", server.Name)
+	return plex.Connection{}, false
 }
 
 var sessionCache = make(map[string]types.PlexStableSession)
@@ -190,11 +179,6 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 	}
 }
 
-var connectBackoff = &backoff.Backoff{
-	Min: 100 * time.Millisecond,
-	Max: 10 * time.Second,
-}
-
 // StartWebsocketConnections starts a WebSocket connection to a server, and manages events from them
 func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
 	Plex := GetPlex(server.Connection[0].URI, server.AccessToken)
@@ -202,15 +186,16 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 	cancelChan := make(chan interface{})
 
 	onConnectionClose := func() {
-		delete(*runningSockets, server.ClientIdentifier)
-		StartWebsocketConnections(server, accountData, runningSockets)
+		delete(*runningSockets, server.Name)
 	}
 
 	onError := func(err error) {
-		cancelChan <- true
+		select {
+		case cancelChan <- true:
+		default:
+		}
 		log.Printf("Couldn't connect or lost connection to %s", server.Name)
 		log.Println(err)
-		time.Sleep(connectBackoff.Duration())
 		onConnectionClose()
 	}
 
@@ -254,5 +239,15 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 
 	Plex.SubscribeToNotifications(events, cancelChan, onError, onConnectionClose)
 	(*runningSockets)[server.ClientIdentifier] = &cancelChan
-	connectBackoff.Reset()
+}
+
+func StartConnectThread(targetServer *plex.PMSDevices, accountData *plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
+	if _, ok := (*runningSockets)[targetServer.ClientIdentifier]; !ok {
+		goodConnection, found := GetGoodURI(targetServer)
+		if !found {
+			return
+		}
+		targetServer.Connection = []plex.Connection{goodConnection}
+	}
+	StartWebsocketConnections(*targetServer, accountData, runningSockets)
 }

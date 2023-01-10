@@ -4,30 +4,26 @@ go 1.18
 
 require (
 	github.com/Arno500/go-plex-client v1.1.10
-	github.com/aws/aws-sdk-go v1.44.136
+	github.com/aws/aws-sdk-go v1.44.176
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
 	github.com/gen2brain/beeep v0.0.0-20220909211152-5a9ec94374f6
 	github.com/google/uuid v1.3.0
 	github.com/hashicorp/go-version v1.6.0
 	github.com/hugolgst/rich-go v0.0.0-20210925091458-d59fb695d9c0
-	github.com/jpillora/backoff v1.0.0
 	github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73
 	github.com/nicksnyder/go-i18n/v2 v2.2.1
 	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
-	golang.org/x/text v0.4.0
+	golang.org/x/text v0.6.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
 require (
+	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/koffeinsource/go-klogger v0.1.1 // indirect
-	github.com/nxadm/tail v1.4.8 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
@@ -51,13 +47,13 @@ require (
 	github.com/onsi/gomega v1.24.1 // indirect
 	github.com/oxtoacart/bpool v0.0.0-20190530202638-03653db5a59c // indirect
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
-	go.opentelemetry.io/otel v1.11.1 // indirect
-	go.opentelemetry.io/otel/trace v1.11.1 // indirect
+	go.opentelemetry.io/otel v1.11.2 // indirect
+	go.opentelemetry.io/otel/trace v1.11.2 // indirect
 	go.uber.org/atomic v1.10.0 // indirect
-	go.uber.org/multierr v1.8.0 // indirect
-	go.uber.org/zap v1.23.0 // indirect
-	golang.org/x/net v0.2.0 // indirect
-	golang.org/x/sys v0.2.0 // indirect
+	go.uber.org/multierr v1.9.0 // indirect
+	go.uber.org/zap v1.24.0 // indirect
+	golang.org/x/net v0.5.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

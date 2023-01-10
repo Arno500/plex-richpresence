@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"sync"
 	"time"
 
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -86,7 +85,6 @@ func disconnectSockets(sockets *map[string]*chan interface{}) {
 
 func mainFunc(ctx context.Context) {
 	var Plex *plexpkg.Plex
-	var filteredServers []plexpkg.PMSDevices
 	var accountData plexpkg.UserPlexTV
 	runningSockets := make(map[string]*chan interface{})
 
@@ -95,28 +93,16 @@ func mainFunc(ctx context.Context) {
 	// TODO: Need to seed first session data if admin (Plex doesn't resend data)
 
 	for {
-		var wg sync.WaitGroup
 		log.Printf("Refreshing servers")
 		Plex = plex.GetPlexTv()
 		accountData, _ = Plex.MyAccount()
 		servers, _ := Plex.GetServers()
 		plex.RefreshDevicesCache(Plex)
 
-		filteredServers = nil
 		for _, server := range servers {
+			server := server
 			if _, ok := runningSockets[server.ClientIdentifier]; !ok {
-				wg.Add(1)
-				go plex.GetGoodURI(server, &filteredServers, &wg)
-			}
-		}
-
-		wg.Wait()
-
-		for _, server := range filteredServers {
-			// Second verification in case we have some concurrency issues
-			if _, ok := runningSockets[server.ClientIdentifier]; !ok {
-				go plex.StartWebsocketConnections(server, &accountData, &runningSockets)
-				log.Printf("Sucessfully connected to %s WebSocket", server.Connection[0].URI)
+				go plex.StartConnectThread(&server, &accountData, &runningSockets)
 			}
 		}
 
