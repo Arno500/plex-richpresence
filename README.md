@@ -12,13 +12,14 @@ General:
 Plex:
 - SSO integration
 - Work for unexposed servers (but they still need to be owned by a Plex account)
-- Select which player you want to track
+- Select which player you want to track (a player is added after the content is played for the first time on it)
 - Track new players automatically or not
 - Track all the servers that you own/are invited to
 
 Rich Presence:
 - Cover art/Thumbnail display
 - Elapsed or remaining time display
+- Buttons for music details (not 100% stable, some links are broken)
 
 # Downloads
 

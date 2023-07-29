@@ -87,6 +87,11 @@ func GetGoodURI(server *plex.PMSDevices) (plex.Connection, bool) {
 	return plex.Connection{}, false
 }
 
+// AreSameUser checks if user info between the server and PlexTV are matching
+func AreSameUser(user1 plex.User, user2 plex.UserPlexTV) bool {
+	return user1.Title == user2.Title || user1.Email == user2.Email || user1.Username == user2.Username
+}
+
 var sessionCache = make(map[string]types.PlexStableSession)
 var mediaCache = make(map[string]plex.MediaMetadata)
 
@@ -180,12 +185,13 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 }
 
 // StartWebsocketConnections starts a WebSocket connection to a server, and manages events from them
-func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
+func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
 	Plex := GetPlex(server.Connection[0].URI, server.AccessToken)
 
 	cancelChan := make(chan interface{})
 
 	onConnectionClose := func() {
+		log.Printf("Disconnected from %s", server.Name)
 		delete(*runningSockets, server.ClientIdentifier)
 	}
 
@@ -204,33 +210,47 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 		owned, _ := strconv.ParseBool(server.Owned)
 		var stableSession types.PlexStableSession
 		notif := n.PlaySessionStateNotification[0]
+		log.Printf("Playing event received: %+v", notif)
 		if owned {
 			cacheEntry, entryExists := sessionCache[notif.SessionKey]
+			log.Printf("Server %s is owned by the user, checking if the session is already cached", server.Name)
 			if entryExists && cacheEntry.Media.RatingKey == notif.RatingKey {
+				log.Printf("Session was in the cache, updating state and progress")
 				cacheEntry.Session.State = notif.State
 				cacheEntry.Session.ViewOffset = notif.ViewOffset
 				stableSession = cacheEntry
-			} else {
+				} else {
+				log.Printf("Session was not in the cache, retrieving data")
+				var userSession plex.MetadataV1
 				sessions, err := Plex.GetSessions()
 				if err != nil {
 					log.Panic(err)
 				}
 				for _, session := range sessions.MediaContainer.Metadata {
-					if notif.SessionKey == session.SessionKey && session.User.Title == accountData.Title {
+					if notif.SessionKey == session.SessionKey && session.User.ID == "1" {
 						stableSession = createSessionFromSessionObject(notif, session, Plex)
 						sessionCache[notif.SessionKey] = stableSession
 						break
 					}
 				}
+				if (stableSession.Media.RatingKey == "" && !entryExists) {
+					log.Printf("Couldn't match a session with this notification, ignoring (SessionKey: %s)", notif.SessionKey)
+					_, ok := sessionCache[userSession.SessionKey]
+					if userSession.SessionKey != "" && !ok {
+						log.Printf("A session from the user was still running on the server %+v", userSession)
+					}
+				}
 			}
 		} else {
+			log.Printf("Server %s is not owned by the user, using notification as is", server.Name)
 			stableSession = createSessionFromWSNotif(n.PlaySessionStateNotification[0], Plex)
 		}
-		if !MachineIsEnabled(stableSession.Player) {
-			return
-		}
 		if stableSession.Session.State != "" {
-			discord.SetRichPresence(stableSession, owned)
+			if !MachineIsEnabled(stableSession.Player) {
+				log.Printf("Player %s is not enabled, ignoring", stableSession.Player.Title)
+				return
+			}
+			discord.SetRichPresence(stableSession)
 			if stableSession.Session.State == "stopped" {
 				delete(sessionCache, notif.RatingKey)
 			}
@@ -238,10 +258,11 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData *plex.UserPle
 	})
 
 	Plex.SubscribeToNotifications(events, cancelChan, onError, onConnectionClose)
+	log.Printf("Plex Rich Presence is now receiving notifications from %s (%s)", server.Name, server.ProductVersion)
 	(*runningSockets)[server.ClientIdentifier] = &cancelChan
 }
 
-func StartConnectThread(targetServer *plex.PMSDevices, accountData *plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
+func StartConnectThread(targetServer *plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
 	if _, ok := (*runningSockets)[targetServer.ClientIdentifier]; !ok {
 		goodConnection, found := GetGoodURI(targetServer)
 		if !found {

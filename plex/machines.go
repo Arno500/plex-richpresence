@@ -47,5 +47,5 @@ func MachineIsEnabled(machine types.PlexPlayerKey) bool {
 	log.Printf("Added new device %s (%s, %s)", machine.ClientIdentifier, machine.Title, machine.Product)
 	settings.Save()
 	gui.SetupMachines()
-	return true
+	return settings.StoredSettings.EnableNewDevicesByDefault
 }

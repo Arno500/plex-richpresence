@@ -143,6 +143,11 @@ func SetupMachines() {
 			Chan: reflect.ValueOf(handler.ClickedCh),
 		})
 	}
+	if len(settings.StoredSettings.Devices) == 0 {
+		TrayHandlers.Devices.Disable()
+	} else {
+		TrayHandlers.Devices.Enable()
+	}
 	go func() {
 		for {
 			index, _, _ := reflect.Select(cases)

@@ -102,7 +102,7 @@ func mainFunc(ctx context.Context) {
 		for _, server := range servers {
 			server := server
 			if _, ok := runningSockets[server.ClientIdentifier]; !ok {
-				go plex.StartConnectThread(&server, &accountData, &runningSockets)
+				go plex.StartConnectThread(&server, accountData, &runningSockets)
 			}
 		}
 

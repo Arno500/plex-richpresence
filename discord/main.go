@@ -87,7 +87,7 @@ func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 }
 
 // SetRichPresence allows to send Rich Presence informations to Plex from a session info
-func SetRichPresence(session types.PlexStableSession, owned bool) {
+func SetRichPresence(session types.PlexStableSession) {
 	InitDiscordClient()
 	if !currentPlayState.DiscordConnected {
 		return
