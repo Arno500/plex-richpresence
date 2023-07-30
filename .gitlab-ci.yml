@@ -35,7 +35,7 @@ compile-linux:
     - tags
 
 compile-windows:
-  image: x1unix/go-mingw:1.18
+  image: x1unix/go-mingw:latest
   allow_failure: false
   stage: build
   script:
