@@ -155,6 +155,7 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 		Media: types.PlexMediaKey{
 			RatingKey:            session.RatingKey,
 			Type:                 session.Type,
+			Live:				  session.Live == "1",
 			Duration:             session.Duration,
 			Index:                session.Index,
 			ParentIndex:          session.ParentIndex,
@@ -184,6 +185,33 @@ func createSessionFromSessionObject(wsNotif plex.PlaySessionStateNotification, s
 	}
 }
 
+func refreshMetadata(session *types.PlexStableSession, Plex *plex.Plex) {
+	mediaInfos, _ := Plex.GetMetadata(session.Media.RatingKey)
+	guid, _ := url.Parse(mediaInfos.MediaContainer.Metadata[0].GUID)
+	parentGuid, _ := url.Parse(mediaInfos.MediaContainer.Metadata[0].ParentGUID)
+	grandparentGuid, _ := url.Parse(mediaInfos.MediaContainer.Metadata[0].GrandparentGUID)
+	session.Media = types.PlexMediaKey{
+			RatingKey:            mediaInfos.MediaContainer.Metadata[0].RatingKey,
+			Type:                 mediaInfos.MediaContainer.Metadata[0].Type,
+			Live:				  mediaInfos.MediaContainer.Metadata[0].Live == "1",
+			Duration:             int64(mediaInfos.MediaContainer.Metadata[0].Duration),
+			Index:                mediaInfos.MediaContainer.Metadata[0].Index,
+			ParentIndex:          mediaInfos.MediaContainer.Metadata[0].ParentIndex,
+			Director:             mediaInfos.MediaContainer.Metadata[0].Director,
+			GrandparentTitle:     mediaInfos.MediaContainer.Metadata[0].GrandparentTitle,
+			OriginalTitle:        mediaInfos.MediaContainer.Metadata[0].OriginalTitle,
+			ParentTitle:          mediaInfos.MediaContainer.Metadata[0].ParentTitle,
+			Title:                mediaInfos.MediaContainer.Metadata[0].Title,
+			Year:                 mediaInfos.MediaContainer.Metadata[0].Year,
+			Thumbnail:            mediaInfos.MediaContainer.Metadata[0].Thumb,
+			ParentThumbnail:      mediaInfos.MediaContainer.Metadata[0].ParentThumb,
+			GrandparentThumbnail: mediaInfos.MediaContainer.Metadata[0].GrandparentThumb,
+			GUID:                 *guid,
+			ParentGUID:           *parentGuid,
+			GrandparentGUID:      *grandparentGuid,
+		}
+}
+
 // StartWebsocketConnections starts a WebSocket connection to a server, and manages events from them
 func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
 	Plex := GetPlex(server.Connection[0].URI, server.AccessToken)
@@ -196,12 +224,12 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 	}
 
 	onError := func(err error) {
+		log.Printf("Couldn't connect or lost connection to %s", server.Name)
+		log.Println(err)
 		select {
 		case cancelChan <- true:
 		default:
 		}
-		log.Printf("Couldn't connect or lost connection to %s", server.Name)
-		log.Println(err)
 		onConnectionClose()
 	}
 
@@ -214,12 +242,16 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 		if owned {
 			cacheEntry, entryExists := sessionCache[notif.SessionKey]
 			log.Printf("Server %s is owned by the user, checking if the session is already cached", server.Name)
+			if entryExists && cacheEntry.Media.Live {
+				log.Printf("Session was in the cache, but this is live, we want to make sure that the session is not stale")
+				refreshMetadata(&cacheEntry, Plex)
+			}
 			if entryExists && cacheEntry.Media.RatingKey == notif.RatingKey {
 				log.Printf("Session was in the cache, updating state and progress")
 				cacheEntry.Session.State = notif.State
 				cacheEntry.Session.ViewOffset = notif.ViewOffset
 				stableSession = cacheEntry
-				} else {
+			} else {
 				log.Printf("Session was not in the cache, retrieving data")
 				var userSession plex.MetadataV1
 				sessions, err := Plex.GetSessions()
@@ -269,6 +301,6 @@ func StartConnectThread(targetServer *plex.PMSDevices, accountData plex.UserPlex
 			return
 		}
 		targetServer.Connection = []plex.Connection{goodConnection}
+		StartWebsocketConnections(*targetServer, accountData, runningSockets)
 	}
-	StartWebsocketConnections(*targetServer, accountData, runningSockets)
 }

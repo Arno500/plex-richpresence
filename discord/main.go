@@ -99,7 +99,7 @@ func SetRichPresence(session types.PlexStableSession) {
 		LargeImage: "plex",
 		LargeText:  "Plex",
 	}
-	if currentPlayState.PlayingItem == nil || currentPlayState.PlayingItem.Media.RatingKey != session.Media.RatingKey {
+	if currentPlayState.PlayingItem == nil || currentPlayState.PlayingItem.Media.GUID.String() != session.Media.GUID.String() {
 		currentPlayState.PlayingItem = &session
 		currentPlayState.Alteration.Item = true
 	}
@@ -117,7 +117,6 @@ func SetRichPresence(session types.PlexStableSession) {
 			},
 		})
 	} else if (session.Session.State == "playing" || session.Session.State == "buffering") && session.Media.Type != "photo" {
-		currentPlayState.Alteration.Time = true
 		activityInfos.SmallImage = "play"
 		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 			DefaultMessage: &i18npkg.Message{
@@ -152,6 +151,8 @@ func SetRichPresence(session types.PlexStableSession) {
 					End:   &calculatedEndTime,
 				}
 			}
+		} else {
+			currentPlayState.Alteration.Time = true
 		}
 	} else if session.Media.Type == "photo" {
 		activityInfos.SmallImage = "camera"

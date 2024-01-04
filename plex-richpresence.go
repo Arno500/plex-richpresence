@@ -90,8 +90,6 @@ func mainFunc(ctx context.Context) {
 
 	timeoutchan := make(chan bool)
 
-	// TODO: Need to seed first session data if admin (Plex doesn't resend data)
-
 	for {
 		log.Printf("Refreshing servers")
 		Plex = plex.GetPlexTv()

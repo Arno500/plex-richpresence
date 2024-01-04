@@ -62,6 +62,7 @@ type PlexMediaKey struct {
 	ParentTitle          string
 	Title                string
 	Year                 int
+	Live				 bool
 }
 
 // PlexSessionKey is a subkey of PlexStableSession
