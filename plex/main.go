@@ -73,8 +73,9 @@ func GetGoodURI(server *plex.PMSDevices) (plex.Connection, bool) {
 	for _, uri := range server.Connection {
 		parsedURL, _ := url.Parse(uri.URI)
 		log.Printf("%s: Trying to connect to %s", server.Name, parsedURL.Host)
-		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 800*time.Millisecond)
+		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 1*time.Second)
 		if conn != nil {
+			conn.Close()
 			log.Printf("%s: %s was successfully contacted", server.Name, parsedURL.Host)
 			if uri.Relay {
 				log.Printf("%s: This is a relay, so we should have correct access anyway", server.Name)
@@ -213,7 +214,7 @@ func refreshMetadata(session *types.PlexStableSession, Plex *plex.Plex) {
 }
 
 // StartWebsocketConnections starts a WebSocket connection to a server, and manages events from them
-func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
+func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}, reconnectionChannelTimer chan bool) {
 	Plex := GetPlex(server.Connection[0].URI, server.AccessToken)
 
 	cancelChan := make(chan interface{})
@@ -221,6 +222,10 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 	onConnectionClose := func() {
 		log.Printf("Disconnected from %s", server.Name)
 		delete(*runningSockets, server.ClientIdentifier)
+		select {
+			case reconnectionChannelTimer <- true:
+			default:
+		}
 	}
 
 	onError := func(err error) {
@@ -253,23 +258,15 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 				stableSession = cacheEntry
 			} else {
 				log.Printf("Session was not in the cache, retrieving data")
-				var userSession plex.MetadataV1
 				sessions, err := Plex.GetSessions()
 				if err != nil {
-					log.Panic(err)
+					onError(err)
 				}
 				for _, session := range sessions.MediaContainer.Metadata {
 					if notif.SessionKey == session.SessionKey && session.User.ID == "1" {
 						stableSession = createSessionFromSessionObject(notif, session, Plex)
 						sessionCache[notif.SessionKey] = stableSession
 						break
-					}
-				}
-				if (stableSession.Media.RatingKey == "" && !entryExists) {
-					log.Printf("Couldn't match a session with this notification, ignoring (SessionKey: %s)", notif.SessionKey)
-					_, ok := sessionCache[userSession.SessionKey]
-					if userSession.SessionKey != "" && !ok {
-						log.Printf("A session from the user was still running on the server %+v", userSession)
 					}
 				}
 			}
@@ -294,13 +291,13 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 	(*runningSockets)[server.ClientIdentifier] = &cancelChan
 }
 
-func StartConnectThread(targetServer *plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}) {
+func StartConnectThread(targetServer *plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}, reconnectionChannelTimer chan bool) {
 	if _, ok := (*runningSockets)[targetServer.ClientIdentifier]; !ok {
 		goodConnection, found := GetGoodURI(targetServer)
 		if !found {
 			return
 		}
 		targetServer.Connection = []plex.Connection{goodConnection}
-		StartWebsocketConnections(*targetServer, accountData, runningSockets)
+		StartWebsocketConnections(*targetServer, accountData, runningSockets, reconnectionChannelTimer)
 	}
 }

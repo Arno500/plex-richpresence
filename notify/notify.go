@@ -23,8 +23,5 @@ func SendNotification(title string, text string) {
 			}
 		}
 	}
-	err := beeep.Notify(title, text, tempIconPath)
-	if err != nil {
-		log.Panic(err)
-	}
+	beeep.Notify(title, text, tempIconPath)
 }

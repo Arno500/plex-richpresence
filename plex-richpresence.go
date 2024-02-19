@@ -88,7 +88,8 @@ func mainFunc(ctx context.Context) {
 	var accountData plexpkg.UserPlexTV
 	runningSockets := make(map[string]*chan interface{})
 
-	timeoutchan := make(chan bool)
+	reconnectionChannelTimer := make(chan bool)
+	cancelChannelTimer := make(chan bool)
 
 	for {
 		log.Printf("Refreshing servers")
@@ -100,21 +101,28 @@ func mainFunc(ctx context.Context) {
 		for _, server := range servers {
 			server := server
 			if _, ok := runningSockets[server.ClientIdentifier]; !ok {
-				go plex.StartConnectThread(&server, accountData, &runningSockets)
+				go plex.StartConnectThread(&server, accountData, &runningSockets, reconnectionChannelTimer)
 			}
 		}
 
 		// Basically wait 60 seconds in another thread, then finish the loop iteration to scan servers again (thus refreshing everything)
 		go func() {
-			<-time.After(60 * time.Second)
-			timeoutchan <- true
+			select {
+				case <-time.After(60 * time.Second):
+					reconnectionChannelTimer <- true
+				case <-cancelChannelTimer:
+			}
 		}()
 
 		select {
-		case <-ctx.Done():
-			disconnectSockets(&runningSockets)
-			return
-		case <-timeoutchan:
+			case <-ctx.Done():
+				disconnectSockets(&runningSockets)
+				return
+			case <-reconnectionChannelTimer:
+				select {
+					case cancelChannelTimer <- true:
+					default:
+				}
 		}
 	}
 }

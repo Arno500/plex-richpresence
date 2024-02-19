@@ -108,7 +108,6 @@ func SetRichPresence(session types.PlexStableSession) {
 		currentPlayState.Alteration.Time = true
 	}
 	if session.Session.State == "paused" {
-		currentPlayState.Alteration.Time = true
 		activityInfos.SmallImage = "pause"
 		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 			DefaultMessage: &i18npkg.Message{
