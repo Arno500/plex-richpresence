@@ -22,7 +22,7 @@ stages:
   - trigger-autoupdate
 
 compile-linux:
-  image: golang:latest
+  image: golang:1.21
   allow_failure: false
   stage: build
   script:
@@ -35,7 +35,7 @@ compile-linux:
     - tags
 
 compile-windows:
-  image: x1unix/go-mingw:latest
+  image: x1unix/go-mingw:1.21
   allow_failure: false
   stage: build
   script:
