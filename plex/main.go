@@ -2,11 +2,11 @@ package plex
 
 import (
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"runtime"
+	"slices"
 	"strconv"
 	"time"
 
@@ -70,13 +70,16 @@ func GetPlex(instance string, token string) *plex.Plex {
 
 // GetGoodURI finds the working URL for a working server
 func GetGoodURI(server *plex.PMSDevices) (plex.Connection, bool) {
-	for _, uri := range server.Connection {
-		parsedURL, _ := url.Parse(uri.URI)
-		log.Printf("%s: Trying to connect to %s", server.Name, parsedURL.Host)
-		conn, _ := net.DialTimeout("tcp", parsedURL.Host, 1*time.Second)
-		if conn != nil {
-			conn.Close()
-			log.Printf("%s: %s was successfully contacted", server.Name, parsedURL.Host)
+	reversed := slices.Clone(server.Connection)
+	// After some reflection, I realized that most people would want external access, so this improve the chances of finding a working address quickly
+	// + we don't need any speed anyway, so even if we get a relay, it's fine
+	slices.Reverse(reversed)
+	for _, uri := range reversed {
+		Plex := GetPlex(uri.URI, server.AccessToken)
+		log.Printf("%s: Trying to connect to %s", server.Name, uri.URI)
+		_, err := Plex.GetLibraries()
+		if err == nil {
+			log.Printf("%s: %s was successfully contacted", server.Name, uri.URI)
 			if uri.Relay {
 				log.Printf("%s: This is a relay, so we should have correct access anyway", server.Name)
 			}

@@ -109,7 +109,10 @@ func mainFunc(ctx context.Context) {
 		go func() {
 			select {
 				case <-time.After(60 * time.Second):
-					reconnectionChannelTimer <- true
+					select {
+						case reconnectionChannelTimer <- true:
+						default:
+					}
 				case <-cancelChannelTimer:
 			}
 		}()
