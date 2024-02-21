@@ -41,7 +41,12 @@ func onReady() {
 	i18n.InitLocale()
 	settings.Load()
 	gui.SetupTray()
-	autoupdate.Autoupdate()
+	go func() {
+		for {
+			autoupdate.Autoupdate()
+			time.Sleep(6 * time.Hour)
+		}
+	}()
 	ctx, cancelMain := context.WithCancel(context.Background())
 	go mainFunc(ctx)
 	defer func() {
@@ -76,8 +81,8 @@ func onReady() {
 func disconnectSockets(sockets *map[string]*chan interface{}) {
 	for _, socket := range *sockets {
 		select {
-		case *socket <- true:
-		default:
+			case *socket <- true:
+			default:
 		}
 	}
 	*sockets = make(map[string]*chan interface{})

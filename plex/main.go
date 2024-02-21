@@ -235,8 +235,8 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 		log.Printf("Couldn't connect or lost connection to %s", server.Name)
 		log.Println(err)
 		select {
-		case cancelChan <- true:
-		default:
+			case cancelChan <- true:
+			default:
 		}
 		onConnectionClose()
 	}
