@@ -26,8 +26,7 @@ type PlayState struct {
 	PlayingItem        *PlexStableSession
 	Thumb              struct {
 		PlexThumbUrl string
-		DeleteKey    string
-		ImgurLink    string
+		ImgLink    string
 	}
 	Alteration struct {
 		Item bool

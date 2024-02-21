@@ -16,14 +16,9 @@ import (
 	"gitlab.com/Arno500/plex-richpresence/i18n"
 	"gitlab.com/Arno500/plex-richpresence/settings"
 	"gitlab.com/Arno500/plex-richpresence/types"
-
-	"github.com/koffeinsource/go-imgur"
 )
 
-const imgurClientID = "86fc159a556c60f"
-
 var currentPlayState types.PlayState
-var imgurInstance, _ = imgur.NewClient(http.DefaultClient, imgurClientID, "")
 
 // InitDiscordClient prepares Discord's RPC API to allow Rich Presence
 func InitDiscordClient() {
@@ -48,18 +43,10 @@ func LogoutDiscordClient() {
 
 func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 	if currentPlayState.Thumb.PlexThumbUrl == thumbKey {
-		if currentPlayState.Thumb.ImgurLink != "" {
-			return currentPlayState.Thumb.ImgurLink
+		if currentPlayState.Thumb.ImgLink != "" {
+			return currentPlayState.Thumb.ImgLink
 		} else {
 			return "plex"
-		}
-	}
-	if currentPlayState.Thumb.DeleteKey != "" {
-		req, _ := http.NewRequest("DELETE", "https://api.imgur.com/3/image/"+currentPlayState.Thumb.DeleteKey, nil)
-		req.Header.Add("Authorization", "Client-ID "+imgurClientID)
-		_, err := http.DefaultClient.Do(req)
-		if err != nil {
-			log.Println("Couldn't delete the previous image: ", err)
 		}
 	}
 	currentPlayState.Thumb.PlexThumbUrl = thumbKey
@@ -70,20 +57,20 @@ func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 		log.Printf("Couldn't get thumbnail from Plex (%s)", err)
 		return "plex"
 	}
+	defer thumbResp.Body.Close()
 	b, err := io.ReadAll(thumbResp.Body)
 	if err != nil {
 		log.Printf("Couldn't read thumbnail from Plex (%s)", err)
 		return "plex"
 	}
 
-	imgInfo, _, err := imgurInstance.UploadImage(b, "", "file", "", "")
+	imgUrl, err := UploadImage(b, thumbKey)
 	if err != nil {
 		log.Println("Error uploading image to imgur: ", err)
 		return "plex"
 	}
-	currentPlayState.Thumb.ImgurLink = imgInfo.Link
-	currentPlayState.Thumb.DeleteKey = imgInfo.Deletehash
-	return imgInfo.Link
+	currentPlayState.Thumb.ImgLink = imgUrl
+	return imgUrl
 }
 
 // SetRichPresence allows to send Rich Presence informations to Plex from a session info
