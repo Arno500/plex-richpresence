@@ -11,7 +11,8 @@ import (
 	"time"
 
 	"github.com/Arno500/go-plex-client"
-	discord "github.com/hugolgst/rich-go/client"
+	discordRP "github.com/fawni/rp"
+	rpc "github.com/fawni/rp/rpc"
 	i18npkg "github.com/nicksnyder/go-i18n/v2/i18n"
 	"gitlab.com/Arno500/plex-richpresence/i18n"
 	"gitlab.com/Arno500/plex-richpresence/settings"
@@ -19,26 +20,23 @@ import (
 )
 
 var currentPlayState types.PlayState
+var discord *rpc.Client
 
 // InitDiscordClient prepares Discord's RPC API to allow Rich Presence
 func InitDiscordClient() {
-	if currentPlayState.DiscordConnected {
-		return
+	if (discord == nil) {
+		discordInstance, err := discordRP.NewClient("803556010307616788")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		discord = discordInstance
 	}
-	err := discord.Login("803556010307616788")
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	currentPlayState.DiscordConnected = true
 }
 
 // LogoutDiscordClient logout from Discord
 func LogoutDiscordClient() {
-	if currentPlayState.DiscordConnected {
-		currentPlayState.DiscordConnected = false
-		discord.Logout()
-	}
+	discord.Logout()
 }
 
 func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
@@ -76,13 +74,10 @@ func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 // SetRichPresence allows to send Rich Presence informations to Plex from a session info
 func SetRichPresence(session types.PlexStableSession) {
 	InitDiscordClient()
-	if !currentPlayState.DiscordConnected {
-		return
-	}
 	now := time.Now()
 	currentPlayState.Alteration.Item = false
 	currentPlayState.Alteration.Time = false
-	activityInfos := discord.Activity{
+	activityInfos := rpc.Activity{
 		LargeImage: "plex",
 		LargeText:  "Plex",
 	}
@@ -120,7 +115,7 @@ func SetRichPresence(session types.PlexStableSession) {
 					currentPlayState.Alteration.Time = true
 					currentPlayState.LastCalculatedTime = calculatedStartTime
 				}
-				activityInfos.Timestamps = &discord.Timestamps{
+				activityInfos.Timestamps = &rpc.Timestamps{
 					Start: &calculatedStartTime,
 				}
 			} else if settings.StoredSettings.TimeMode == "remaining" {
@@ -132,7 +127,7 @@ func SetRichPresence(session types.PlexStableSession) {
 					currentPlayState.Alteration.Time = true
 					currentPlayState.LastCalculatedTime = calculatedEndTime
 				}
-				activityInfos.Timestamps = &discord.Timestamps{
+				activityInfos.Timestamps = &rpc.Timestamps{
 					Start: &calculatedEndTime,
 					End:   &calculatedEndTime,
 				}
@@ -178,7 +173,7 @@ func SetRichPresence(session types.PlexStableSession) {
 				activityInfos.State = session.Media.GrandparentTitle
 			}
 			activityInfos.LargeImage = getThumbnailLink(session.Media.ParentThumbnail, session.PlexInstance)
-			activityInfos.Buttons = append(activityInfos.Buttons, &discord.Button{
+			activityInfos.Buttons = append(activityInfos.Buttons, &rpc.Button{
 				Label: i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 				DefaultMessage: &i18npkg.Message{
 					ID:    "TrackDetails",
@@ -203,10 +198,9 @@ func SetRichPresence(session types.PlexStableSession) {
 			activityInfos.State = session.Media.Title
 			activityInfos.SmallText = "Preroll"
 		}
-		err := discord.SetActivity(activityInfos)
+		err := discord.SetActivity(&activityInfos)
 		if err != nil {
 			log.Printf("An error occured when setting the activity in Discord: %v", err)
-			currentPlayState.DiscordConnected = false
 		} else {
 			log.Printf("Discord activity set")
 		}

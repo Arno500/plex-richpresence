@@ -22,7 +22,6 @@ type TrayHandlersStruct struct {
 type PlayState struct {
 	LastCalculatedTime time.Time
 	PlayState          string
-	DiscordConnected   bool
 	PlayingItem        *PlexStableSession
 	Thumb              struct {
 		PlexThumbUrl string

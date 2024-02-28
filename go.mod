@@ -7,10 +7,10 @@ require (
 	github.com/aws/aws-sdk-go v1.50.23
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
+	github.com/fawni/rp v0.3.1
 	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-version v1.6.0
-	github.com/hugolgst/rich-go v0.0.0-20230917173849-4a4fb1d3c362
 	github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73
 	github.com/nicksnyder/go-i18n/v2 v2.4.0
 	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
@@ -19,16 +19,8 @@ require (
 )
 
 require (
-	github.com/BurntSushi/toml v1.3.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
-	github.com/koffeinsource/go-klogger v0.1.1 // indirect
 	github.com/nxadm/tail v1.4.11 // indirect
 	go.opentelemetry.io/otel/metric v1.23.1 // indirect
-	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.32.0 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
@@ -53,13 +45,11 @@ require (
 	github.com/tadvi/systray v0.0.0-20190226123456-11a2b8fa57af // indirect
 	go.opentelemetry.io/otel v1.23.1 // indirect
 	go.opentelemetry.io/otel/trace v1.23.1 // indirect
-	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
 // replace github.com/Arno500/go-plex-client => C:\Users\arnod\go\src\github.com\Arno500\go-plex-client
