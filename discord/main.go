@@ -201,6 +201,7 @@ func SetRichPresence(session types.PlexStableSession) {
 		err := discord.SetActivity(&activityInfos)
 		if err != nil {
 			log.Printf("An error occured when setting the activity in Discord: %v", err)
+			discord = nil
 		} else {
 			log.Printf("Discord activity set")
 		}
