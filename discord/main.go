@@ -24,7 +24,7 @@ var discord *rpc.Client
 
 // InitDiscordClient prepares Discord's RPC API to allow Rich Presence
 func InitDiscordClient() {
-	if (discord == nil) {
+	if (discord == nil || !discord.Logged) {
 		discordInstance, err := discordRP.NewClient("803556010307616788")
 		if err != nil {
 			log.Println(err)
