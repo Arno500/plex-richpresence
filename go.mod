@@ -15,6 +15,7 @@ require (
 	github.com/nicksnyder/go-i18n/v2 v2.4.0
 	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
 	golang.org/x/text v0.14.0
+	golang.org/x/sync v0.6.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 

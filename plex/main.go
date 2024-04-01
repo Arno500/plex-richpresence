@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"time"
 
+	"golang.org/x/sync/singleflight"
+
 	"github.com/Arno500/go-plex-client"
 	"gitlab.com/Arno500/plex-richpresence/discord"
 	"gitlab.com/Arno500/plex-richpresence/settings"
@@ -216,6 +218,8 @@ func refreshMetadata(session *types.PlexStableSession, Plex *plex.Plex) {
 		}
 }
 
+
+var callGroup = singleflight.Group{}
 // StartWebsocketConnections starts a WebSocket connection to a server, and manages events from them
 func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlexTV, runningSockets *map[string]*chan interface{}, reconnectionChannelTimer chan bool) {
 	Plex := GetPlex(server.Connection[0].URI, server.AccessToken)
@@ -282,7 +286,10 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 				log.Printf("Player %s is not enabled, ignoring", stableSession.Player.Title)
 				return
 			}
+			callGroup.Do(stableSession.Media.RatingKey, func() (interface{}, error) {
 			discord.SetRichPresence(stableSession)
+				return nil, nil
+			})
 			if stableSession.Session.State == "stopped" {
 				delete(sessionCache, notif.RatingKey)
 			}
