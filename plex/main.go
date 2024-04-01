@@ -287,7 +287,7 @@ func StartWebsocketConnections(server plex.PMSDevices, accountData plex.UserPlex
 				return
 			}
 			callGroup.Do(stableSession.Media.RatingKey, func() (interface{}, error) {
-			discord.SetRichPresence(stableSession)
+				discord.SetRichPresence(stableSession)
 				return nil, nil
 			})
 			if stableSession.Session.State == "stopped" {

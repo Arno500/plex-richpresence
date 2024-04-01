@@ -9,7 +9,6 @@ import (
 )
 
 func UploadImage(image []byte, imageName string) (string, error) {
-	client := &http.Client{}
 
 	reader, mpForm := createMultipartForm("", image, imageName)
 
