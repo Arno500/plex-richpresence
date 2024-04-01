@@ -107,7 +107,7 @@ func SetRichPresence(session types.PlexStableSession) {
 		})
 		if session.Session.State == "playing" {
 			timeResetThreshold, _ := time.ParseDuration("4s")
-			progress, _ := time.ParseDuration(strconv.FormatInt(session.Session.ViewOffset, 10) + "ms")
+			progress, _ := time.ParseDuration(strconv.FormatInt(session.Session.ViewOffset / 1000, 10) + "s")
 			if settings.StoredSettings.TimeMode == "elapsed" {
 				calculatedStartTime := now.Add(-progress)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedStartTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedStartTime)) {
