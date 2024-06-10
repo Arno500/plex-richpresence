@@ -11,6 +11,7 @@ import (
 func UploadImage(image []byte, imageName string) (string, error) {
 
 	reader, mpForm := createMultipartForm("", image, imageName)
+	defer reader.Close()
 
 	req, err := http.NewRequest(http.MethodPost, "https://litterbox.catbox.moe/resources/internals/api.php", reader)
 	if err != nil {
@@ -44,7 +45,10 @@ func createMultipartForm(expiration string, image []byte, imageName string) (*io
 			m.WriteField("time", "12h")
 		}
 
-		formFile, _ := m.CreateFormFile("fileToUpload", path.Base(imageName))
+		formFile, err := m.CreateFormFile("fileToUpload", path.Base(imageName))
+		if err != nil {
+			return
+		}
 		if _, err := io.Copy(formFile, bytes.NewBuffer(image)); err != nil {
 			return
 		}
