@@ -25,6 +25,8 @@ var client = &http.Client{
 	Timeout: 5 * time.Second,
 }
 
+const EMPTY_THUMB_STRING = "plex"
+
 // InitDiscordClient prepares Discord's RPC API to allow Rich Presence
 func InitDiscordClient() {
 	if (discord == nil || !discord.Logged) {
@@ -44,7 +46,7 @@ func LogoutDiscordClient() {
 
 func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 	if currentPlayState.Thumb.PlexThumbUrl == thumbKey {
-		if currentPlayState.Thumb.ImgLink != "" {
+		if currentPlayState.Thumb.ImgLink != EMPTY_THUMB_STRING {
 			return currentPlayState.Thumb.ImgLink
 		}
 	}
@@ -54,22 +56,22 @@ func getThumbnailLink(thumbKey string, plexInstance *plex.Plex) string {
 	thumbResp, err := client.Get(plexThumbLink)
 	if err != nil {
 		log.Printf("Couldn't get thumbnail from Plex (%s)", err)
-		currentPlayState.Thumb.ImgLink = "plex"
-		return "plex"
+		currentPlayState.Thumb.ImgLink = EMPTY_THUMB_STRING
+		return EMPTY_THUMB_STRING
 	}
 	defer thumbResp.Body.Close()
 	b, err := io.ReadAll(thumbResp.Body)
 	if err != nil {
 		log.Printf("Couldn't read thumbnail from Plex (%s)", err)
-		currentPlayState.Thumb.ImgLink = "plex"
-		return "plex"
+		currentPlayState.Thumb.ImgLink = EMPTY_THUMB_STRING
+		return EMPTY_THUMB_STRING
 	}
 
 	imgUrl, err := UploadImage(b, thumbKey)
 	if err != nil {
 		log.Println("Error uploading image to litterbox: ", err)
-		currentPlayState.Thumb.ImgLink = "plex"
-		return "plex"
+		currentPlayState.Thumb.ImgLink = EMPTY_THUMB_STRING
+		return EMPTY_THUMB_STRING
 	}
 	currentPlayState.Thumb.ImgLink = imgUrl
 	return imgUrl
