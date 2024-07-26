@@ -117,7 +117,7 @@ func SetRichPresence(session types.PlexStableSession) {
 			if settings.StoredSettings.TimeMode == "elapsed" {
 				calculatedStartTime := now.Add(-progress)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedStartTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedStartTime)) {
-					log.Printf("A seek or a media change was detected, adjusting")
+					log.Printf("A seek or a media change was detected, updating state...")
 					currentPlayState.Alteration.Time = true
 					currentPlayState.LastCalculatedTime = calculatedStartTime
 				}
@@ -129,7 +129,7 @@ func SetRichPresence(session types.PlexStableSession) {
 				remaining := duration - progress
 				calculatedEndTime := now.Add(remaining)
 				if !(currentPlayState.LastCalculatedTime.Add(-timeResetThreshold).Before(calculatedEndTime) && currentPlayState.LastCalculatedTime.Add(timeResetThreshold).After(calculatedEndTime)) {
-					log.Printf("A seek or a media change was detected, adjusting")
+					log.Printf("A seek or a media change was detected, updating state...")
 					currentPlayState.Alteration.Time = true
 					currentPlayState.LastCalculatedTime = calculatedEndTime
 				}
