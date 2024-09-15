@@ -75,14 +75,6 @@
     "hash": "sha1-1f8b17fa2a26bd2fb63fea72bc4d029de9d633e3",
     "other": "Connexion à Plex pour Plex Rich Presence"
   },
-  "TimeMenu": {
-    "hash": "sha1-0a83740923c6a39ba6009f9fca2a6f26c52cdac3",
-    "other": "Affichage du temps"
-  },
-  "TimeMenuDescription": {
-    "hash": "sha1-89b88123af13329f02207e400e630775de8d69b7",
-    "other": "Change la manière d'afficher le temps dans Discord"
-  },
   "TrackDetails": {
     "hash": "sha1-c3b52214255f9c2d62ebc6a0948f7b7d894eecac",
     "other": "Plus de détails sur plex.tv"

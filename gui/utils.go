@@ -8,13 +8,6 @@ import (
 	"gitlab.com/Arno500/plex-richpresence/types"
 )
 
-func ToggleTimeMode(checkbox1 *systray.MenuItem, checkbox2 *systray.MenuItem, valToSet string) {
-	checkbox1.Check()
-	checkbox2.Uncheck()
-	settings.StoredSettings.TimeMode = valToSet
-	settings.Save()
-}
-
 func ToggleAutoStart(trayItem *systray.MenuItem) {
 	if trayItem.Checked() {
 		trayItem.Uncheck()

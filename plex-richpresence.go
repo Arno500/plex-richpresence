@@ -58,10 +58,6 @@ func onReady() {
 	}()
 	for {
 		select {
-		case <-gui.TrayHandlers.TimeElapsed.ClickedCh:
-			gui.ToggleTimeMode(gui.TrayHandlers.TimeElapsed, gui.TrayHandlers.TimeRemaining, "elapsed")
-		case <-gui.TrayHandlers.TimeRemaining.ClickedCh:
-			gui.ToggleTimeMode(gui.TrayHandlers.TimeRemaining, gui.TrayHandlers.TimeElapsed, "remaining")
 		case <-gui.TrayHandlers.EnabledDeviceByDefault.ClickedCh:
 			gui.ToggleAutoEnableDevices(gui.TrayHandlers.EnabledDeviceByDefault)
 		case <-gui.TrayHandlers.AutoLaunch.ClickedCh:
@@ -81,8 +77,8 @@ func onReady() {
 func disconnectSockets(sockets *map[string]*chan interface{}) {
 	for _, socket := range *sockets {
 		select {
-			case *socket <- true:
-			default:
+		case *socket <- true:
+		default:
 		}
 	}
 	*sockets = make(map[string]*chan interface{})
@@ -113,24 +109,24 @@ func mainFunc(ctx context.Context) {
 		// Basically wait 60 seconds in another thread, then finish the loop iteration to scan servers again (thus refreshing everything)
 		go func() {
 			select {
-				case <-time.After(60 * time.Second):
-					select {
-						case reconnectionChannelTimer <- true:
-						default:
-					}
-				case <-cancelChannelTimer:
+			case <-time.After(60 * time.Second):
+				select {
+				case reconnectionChannelTimer <- true:
+				default:
+				}
+			case <-cancelChannelTimer:
 			}
 		}()
 
 		select {
-			case <-ctx.Done():
-				disconnectSockets(&runningSockets)
-				return
-			case <-reconnectionChannelTimer:
-				select {
-					case cancelChannelTimer <- true:
-					default:
-				}
+		case <-ctx.Done():
+			disconnectSockets(&runningSockets)
+			return
+		case <-reconnectionChannelTimer:
+			select {
+			case cancelChannelTimer <- true:
+			default:
+			}
 		}
 	}
 }
