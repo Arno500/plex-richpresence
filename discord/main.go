@@ -198,7 +198,7 @@ func SetRichPresence(session types.PlexStableSession) {
 			} else {
 				artist = session.Media.GrandparentTitle
 			}
-			activityInfos.State = fmt.Sprintf("by %s", artist)
+			activityInfos.State = artist
 			activityInfos.LargeImage = getThumbnailLink(session.Media.ParentThumbnail, session.PlexInstance)
 			activityInfos.Buttons = append(activityInfos.Buttons, &rpc.Button{
 				Label: i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
@@ -218,7 +218,7 @@ func SetRichPresence(session types.PlexStableSession) {
 				Url: fmt.Sprintf("https://www.youtube.com/results?search_query=%s", url.QueryEscape(artist+" "+session.Media.Title)),
 			})
 			activityInfos.Details = session.Media.Title
-			activityInfos.LargeText = fmt.Sprintf("on %s", session.Media.ParentTitle)
+			activityInfos.LargeText = session.Media.ParentTitle
 		} else if session.Media.Type == "photo" {
 			text := i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 				DefaultMessage: &i18npkg.Message{
