@@ -25,7 +25,7 @@ type PlayState struct {
 	PlayingItem        *PlexStableSession
 	Thumb              struct {
 		PlexThumbUrl string
-		ImgLink    string
+		ImgLink      string
 	}
 	Alteration struct {
 		Item bool
@@ -60,7 +60,7 @@ type PlexMediaKey struct {
 	ParentTitle          string
 	Title                string
 	Year                 int
-	Live				 bool
+	Live                 bool
 }
 
 // PlexSessionKey is a subkey of PlexStableSession
@@ -91,7 +91,6 @@ type Device struct {
 
 // PlexRPSettings is the stored structure on the file system
 type PlexRPSettings struct {
-	TimeMode                  string      `json:"timeMode" default:"elapsed"`
 	ClientIdentifier          string      `json:"clientId"`
 	AccessToken               string      `json:"accessToken"`
 	Pin                       PinSettings `json:"pin"`

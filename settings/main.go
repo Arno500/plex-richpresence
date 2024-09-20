@@ -19,7 +19,6 @@ var ConfigFolders []*configdir.Config = configDirs.QueryFolders(configdir.Global
 
 // StoredSettings contains the global settings of the app
 var StoredSettings = types.PlexRPSettings{
-	TimeMode:                  "elapsed",
 	EnableNewDevicesByDefault: true,
 	Devices:                   []types.Device{},
 }
