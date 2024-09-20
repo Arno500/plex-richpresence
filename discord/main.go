@@ -100,14 +100,16 @@ func SetRichPresence(session types.PlexStableSession) {
 		currentPlayState.PlayState = session.Session.State
 		currentPlayState.Alteration.Time = true
 	}
-	if session.Session.State == "paused" && session.Media.Type == "track" {
-		activityInfos.SmallImage = "pause"
-		activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-			DefaultMessage: &i18npkg.Message{
-				ID:    "Paused",
-				Other: "Paused",
-			},
-		})
+	if session.Session.State == "paused" {
+		if session.Media.Type == "track" {
+			activityInfos.SmallImage = "pause"
+			activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
+				DefaultMessage: &i18npkg.Message{
+					ID:    "Paused",
+					Other: "Paused",
+				},
+			})
+		}
 	} else if (session.Session.State == "playing" || session.Session.State == "buffering") && session.Media.Type != "photo" {
 		if session.Media.Type == "track" {
 			activityInfos.SmallImage = "play"
@@ -162,10 +164,11 @@ func SetRichPresence(session types.PlexStableSession) {
 				Url: fmt.Sprintf("https://app.plex.tv/desktop/#!/provider/tv.plex.provider.discover/details?key=/library/metadata/%s", path.Base(session.Media.GrandparentGUID.EscapedPath())),
 			})
 		} else if session.Media.Type == "movie" {
+			var formattedMovieName string
 			if session.Media.Year > 0 {
-				activityInfos.Details = fmt.Sprintf("%s (%d)", session.Media.Title, session.Media.Year)
+				formattedMovieName = fmt.Sprintf("%s (%d)", session.Media.Title, session.Media.Year)
 			} else {
-				activityInfos.Details = session.Media.Title
+				formattedMovieName = session.Media.Title
 			}
 			// Movie Director(s)
 			if len(session.Media.Director) > 0 {
@@ -177,6 +180,7 @@ func SetRichPresence(session types.PlexStableSession) {
 			} else {
 				activityInfos.State = "(⌐■_■)"
 			}
+			activityInfos.Details = formattedMovieName
 			activityInfos.LargeImage = getThumbnailLink(session.Media.Thumbnail, session.PlexInstance)
 			activityInfos.Buttons = append(activityInfos.Buttons, &rpc.Button{
 				Label: i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
