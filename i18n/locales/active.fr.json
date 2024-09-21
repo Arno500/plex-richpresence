@@ -27,14 +27,6 @@
     "hash": "sha1-4407f4e3dd4af900d57428dd60fdf4c314374377",
     "other": "Déconnexion à Plex. Va automatiquement lancer le navigateur pour se reconnecter."
   },
-  "ElapsedMode": {
-    "hash": "sha1-5fc97790c6a8d0d31fd5500ddd5c847e8419da0a",
-    "other": "Écoulé"
-  },
-  "ElapsedModeDescription": {
-    "hash": "sha1-ad474ae2c7001283b9c73a7a7e24bc115085966b",
-    "other": "Affiche le temps écoulé sur Discord"
-  },
   "EnableDevicesByDefault": {
     "hash": "sha1-7179de376deb89b945b9add8eaa115f62b6c12c9",
     "other": "Suivre les lecteurs par défaut"
@@ -42,6 +34,10 @@
   "EnableDevicesByDefaultDescription": {
     "hash": "sha1-63fed56894d297aa3ee0573275d5092ed0a0aa3f",
     "other": "Cocher la case pour suivre les lecteurs par défaut dès leur détection"
+  },
+  "MovieDetails": {
+    "hash": "sha1-5d9f3104c5306c24b1a2fdc1a24472548848b1a0",
+    "other": "Movie details on Plex"
   },
   "NowPlaying": {
     "hash": "sha1-298c39056151b34c044cd50fa98cb1484f6859c3",
@@ -59,13 +55,9 @@
     "hash": "sha1-e9146ae6a03f6fa96016efa792e084d36172558b",
     "other": "Ferme l'application et arrête d'envoyer les données à Discord"
   },
-  "RemainingMode": {
-    "hash": "sha1-cc632b5e2fd25e472765bc5ff12eb8477a7019f4",
-    "other": "Restant"
-  },
-  "RemainingModeDescription": {
-    "hash": "sha1-dcfe5ec8ca6f11fe77f161bab3ccf11d614ebb78",
-    "other": "Affiche le temps restant sur Discord"
+  "ShowDetails": {
+    "hash": "sha1-e3aca6635a65d6e1f760806a9bcc83aa586bbaa8",
+    "other": "Show details on Plex"
   },
   "SignInNotificationDescription": {
     "hash": "sha1-cac792b71d8c1e672e11d54216cd727a16342a16",
@@ -76,7 +68,7 @@
     "other": "Connexion à Plex pour Plex Rich Presence"
   },
   "TrackDetails": {
-    "hash": "sha1-c3b52214255f9c2d62ebc6a0948f7b7d894eecac",
+    "hash": "sha1-971ed0cb49f6eb3af70daf2aacf092199221066e",
     "other": "Plus de détails sur plex.tv"
   },
   "Version": {
@@ -86,5 +78,9 @@
   "WatchingPhotos": {
     "hash": "sha1-2ac8fe3d2ecad76baaf054bfeca417b0785a164c",
     "other": "Regarde des photos"
+  },
+  "YoutubeSearch": {
+    "hash": "sha1-367baec387db026db56abcd08bda30df78222711",
+    "other": "Search on YouTube"
   }
 }
