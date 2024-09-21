@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/Arno500/go-plex-client"
-	discordRP "github.com/fawni/rp"
-	rpc "github.com/fawni/rp/rpc"
+	discordRP "github.com/brw/rp"
+	rpc "github.com/brw/rp/rpc"
 	i18npkg "github.com/nicksnyder/go-i18n/v2/i18n"
 	"gitlab.com/Arno500/plex-richpresence/i18n"
 	"gitlab.com/Arno500/plex-richpresence/types"

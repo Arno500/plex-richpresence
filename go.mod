@@ -5,17 +5,17 @@ go 1.21
 require (
 	github.com/Arno500/go-plex-client v1.1.12
 	github.com/aws/aws-sdk-go v1.50.23
+	github.com/brw/rp v0.3.2
 	github.com/cubiest/jibberjabber v1.0.1
 	github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a
-	github.com/fawni/rp v0.3.1
 	github.com/gen2brain/beeep v0.0.0-20240112042604-c7bb2cd88fea
 	github.com/google/uuid v1.6.0
 	github.com/hashicorp/go-version v1.6.0
 	github.com/nekr0z/systray v1.1.1-0.20210610115307-891b38719d73
 	github.com/nicksnyder/go-i18n/v2 v2.4.0
 	github.com/shibukawa/configdir v0.0.0-20170330084843-e180dbdc8da0
-	golang.org/x/text v0.14.0
 	golang.org/x/sync v0.6.0
+	golang.org/x/text v0.14.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 )
 
