@@ -101,6 +101,7 @@ func SetRichPresence(session types.PlexStableSession) {
 		currentPlayState.Alteration.Time = true
 	}
 	if session.Session.State == "paused" {
+		// If track, display pause icon. If anything else, don't report times to hide timebar.
 		if session.Media.Type == "track" {
 			activityInfos.SmallImage = "pause"
 			activityInfos.SmallText = i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
