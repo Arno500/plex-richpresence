@@ -37,7 +37,7 @@
   },
   "MovieDetails": {
     "hash": "sha1-5d9f3104c5306c24b1a2fdc1a24472548848b1a0",
-    "other": "Movie details on Plex"
+    "other": "Détails du film sur Plex"
   },
   "NowPlaying": {
     "hash": "sha1-298c39056151b34c044cd50fa98cb1484f6859c3",
@@ -57,7 +57,7 @@
   },
   "ShowDetails": {
     "hash": "sha1-e3aca6635a65d6e1f760806a9bcc83aa586bbaa8",
-    "other": "Show details on Plex"
+    "other": "Détails de la série sur Plex"
   },
   "SignInNotificationDescription": {
     "hash": "sha1-cac792b71d8c1e672e11d54216cd727a16342a16",
@@ -81,6 +81,6 @@
   },
   "YoutubeSearch": {
     "hash": "sha1-367baec387db026db56abcd08bda30df78222711",
-    "other": "Search on YouTube"
+    "other": "Rechercher sur YouTube"
   }
 }

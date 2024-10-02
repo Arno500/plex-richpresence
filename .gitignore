@@ -2,3 +2,5 @@
 config.json
 __debug*
 plex-rich-presence_*
+
+i18n/locales/translate*.json
