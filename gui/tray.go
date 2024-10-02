@@ -25,34 +25,6 @@ func SetupTray() {
 	systray.SetIcon(icon.Data)
 	systray.SetTitle("Plex Rich Presence")
 	systray.SetTooltip("Plex Rich Presence")
-	timeMenu := systray.AddMenuItem(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-		DefaultMessage: &i18npkg.Message{
-			ID:    "TimeMenu",
-			Other: "Time display",
-		}}), i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-		DefaultMessage: &i18npkg.Message{
-			ID:    "TimeMenuDescription",
-			Other: "The way of displaying time in Discord",
-		}}))
-	TrayHandlers.TimeElapsed = timeMenu.AddSubMenuItemCheckbox(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-		DefaultMessage: &i18npkg.Message{
-			ID:    "ElapsedMode",
-			Other: "Elapsed",
-		}}), i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-		DefaultMessage: &i18npkg.Message{
-			ID:    "ElapsedModeDescription",
-			Other: "Will show the elapsed time in Discord",
-		}}), settings.StoredSettings.TimeMode == "elapsed")
-	TrayHandlers.TimeRemaining = timeMenu.AddSubMenuItemCheckbox(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-		DefaultMessage: &i18npkg.Message{
-			ID:    "RemainingMode",
-			Other: "Remaining",
-		}}), i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
-		DefaultMessage: &i18npkg.Message{
-			ID:    "RemainingModeDescription",
-			Other: "Will show the remaining in Discord",
-		}}), settings.StoredSettings.TimeMode == "remaining")
-	systray.AddSeparator()
 	TrayHandlers.EnabledDeviceByDefault = systray.AddMenuItemCheckbox(i18n.Localizer.MustLocalize(&i18npkg.LocalizeConfig{
 		DefaultMessage: &i18npkg.Message{
 			ID:    "EnableDevicesByDefault",

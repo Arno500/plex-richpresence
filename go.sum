@@ -5,6 +5,8 @@ github.com/BurntSushi/toml v1.3.2/go.mod h1:CxXYINrC8qIiEnFrOxCa7Jy5BFHlXnUU2pbi
 github.com/aws/aws-sdk-go v1.50.23 h1:BB99ohyCmq6O7m5RvjN2yqTt57snL8OhDvfxEvM6ihs=
 github.com/aws/aws-sdk-go v1.50.23/go.mod h1:LF8svs817+Nz+DmiMQKTO3ubZ/6IaTpq3TjupRn3Eqk=
 github.com/benbjohnson/clock v1.1.0/go.mod h1:J11/hYXuz8f4ySSvYwY0FKfm+ezbsZBKZxNJlLklBHA=
+github.com/brw/rp v0.3.2 h1:70EadiaiLJD3Q5ayGLuFZIrYUUFMXTnnMr0EiFYv/Hw=
+github.com/brw/rp v0.3.2/go.mod h1:tkbV33iiFyzV2uUtpVY0yB6b9FufcUd/xRDfB3CwZTg=
 github.com/cubiest/jibberjabber v1.0.1 h1:JxKC9EZcdw8azEbyWaNj62ppPMkbFJBf2ayPY1vBeDI=
 github.com/cubiest/jibberjabber v1.0.1/go.mod h1:Ovt9ZAmzAgwQ8cWgvZ1se9oaGYzjHrlAXKM3NOzlQOs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -12,8 +14,6 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a h1:M88ob4TyDnEqNuL3PgsE/p3bDujfspnulR+0dQWNYZs=
 github.com/emersion/go-autostart v0.0.0-20210130080809-00ed301c8e9a/go.mod h1:buzQsO8HHkZX2Q45fdfGH1xejPjuDQaXH8btcYMFzPM=
-github.com/fawni/rp v0.3.1 h1:gflBgIPTkL0WtJhRqzp8/8HcR8FI6o+uDQJtIjuZ/i8=
-github.com/fawni/rp v0.3.1/go.mod h1:3uHlrTrjS2XPHQUHX5IYpiXWFOt7mIDn6MhzVCv9BJw=
 github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
 github.com/fsnotify/fsnotify v1.4.9/go.mod h1:znqG4EE+3YCdAaPaxE2ZRY/06pZUdp0tY4IgpuI1SZQ=
 github.com/fsnotify/fsnotify v1.6.0/go.mod h1:sl3t1tCWJFWoRz9R8WJCbQihKKwmorjAbSClcnxKAGw=

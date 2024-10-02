@@ -18,7 +18,8 @@ Plex:
 
 Rich Presence:
 - Cover art/Thumbnail display
-- Elapsed or remaining time display
+- Different activity type when watching or listening
+- Time bar display
 - Buttons for music details (not 100% stable, some links are broken)
 
 # Downloads
